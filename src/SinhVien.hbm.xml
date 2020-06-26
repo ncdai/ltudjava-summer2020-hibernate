@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class
+            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.SinhVien"
+            table="SinhVien"
+            schema="QuanLySinhVien"
+    >
+        <id name="maSinhVien" column="maSinhVien"/>
+        <property name="hoTen" column="hoTen"/>
+        <property name="gioiTinh" column="gioiTinh"/>
+        <property name="cmnd" column="cmnd"/>
+        <property name="matKhau" column="matKhau"/>
+        <property name="maLop" column="maLop"/>
+
+        <set
+                name="danhSachLop"
+                fetch="join"
+                lazy="false"
+                cascade="delete"
+        >
+            <key column="maSinhVien"/>
+            <one-to-many class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.LopOfMon"/>
+        </set>
+    </class>
+</hibernate-mapping>
