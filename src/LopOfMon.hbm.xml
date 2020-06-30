@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
     <class
-            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.LopOfMon"
+            name="vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon"
             table="LopOfMon"
             schema="QuanLySinhVien"
     >
@@ -21,7 +21,7 @@
 
         <many-to-one
                 name="sinhVien"
-                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.SinhVien"
+                class="vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien"
                 fetch="join"
                 lazy="false"
         >
@@ -30,7 +30,7 @@
 
         <many-to-one
                 name="mon"
-                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.Mon"
+                class="vn.name.ChanhDai.QuanLySinhVien.entity.Mon"
                 fetch="join"
                 lazy="false"
         >

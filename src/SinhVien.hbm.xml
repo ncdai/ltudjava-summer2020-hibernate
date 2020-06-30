@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
     <class
-            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.SinhVien"
+            name="vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien"
             table="SinhVien"
             schema="QuanLySinhVien"
     >
@@ -23,7 +23,7 @@
                 cascade="delete"
         >
             <key column="maSinhVien"/>
-            <one-to-many class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.LopOfMon"/>
+            <one-to-many class="vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon"/>
         </set>
     </class>
 </hibernate-mapping>

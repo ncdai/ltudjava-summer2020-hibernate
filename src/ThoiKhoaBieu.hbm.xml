@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
     <class
-            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.ThoiKhoaBieu"
+            name="vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu"
             table="ThoiKhoaBieu"
             schema="QuanLySinhVien"
     >
@@ -15,7 +15,7 @@
 
         <many-to-one
                 name="mon"
-                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.Mon"
+                class="vn.name.ChanhDai.QuanLySinhVien.entity.Mon"
                 fetch="join"
                 lazy="false"
                 cascade="save-update"

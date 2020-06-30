@@ -4,7 +4,11 @@
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.SinhVien" table="SinhVien" schema="QuanLySinhVien">
+    <class
+            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.SinhVien"
+            table="SinhVien"
+            schema="QuanLySinhVien"
+    >
         <id name="maSinhVien" column="maSinhVien"/>
         <property name="hoTen" column="hoTen"/>
         <property name="gioiTinh" column="gioiTinh"/>
@@ -19,7 +23,7 @@
                 cascade="delete"
         >
             <key column="maSinhVien"/>
-            <one-to-many class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.LopOfMon"/>
+            <one-to-many class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.LopOfMon"/>
         </set>
     </class>
 </hibernate-mapping>

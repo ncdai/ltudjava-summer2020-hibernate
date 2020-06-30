@@ -1,23 +1,27 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.LopOfMon" table="LopOfMon" schema="QuanLySinhVien">
+    <class
+            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.LopOfMon"
+            table="LopOfMon"
+            schema="QuanLySinhVien"
+    >
         <id name="id" column="id">
-            <generator class="increment" />
+            <generator class="increment"/>
         </id>
 
         <property name="maLop" column="maLop"/>
-        <property name="diemGK" column="diemGK" />
-        <property name="diemCK" column="diemCK" />
-        <property name="diemKhac" column="diemKhac" />
-        <property name="diemTong" column="diemTong" />
+        <property name="diemGK" column="diemGK"/>
+        <property name="diemCK" column="diemCK"/>
+        <property name="diemKhac" column="diemKhac"/>
+        <property name="diemTong" column="diemTong"/>
 
         <many-to-one
                 name="sinhVien"
-                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.SinhVien"
+                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.SinhVien"
                 fetch="join"
                 lazy="false"
         >
@@ -26,7 +30,7 @@
 
         <many-to-one
                 name="mon"
-                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.Mon"
+                class="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.Mon"
                 fetch="join"
                 lazy="false"
         >
