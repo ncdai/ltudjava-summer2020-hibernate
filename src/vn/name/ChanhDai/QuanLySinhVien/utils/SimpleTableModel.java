@@ -48,6 +48,10 @@ public class SimpleTableModel extends AbstractTableModel {
         data.remove(rowIndex);
     }
 
+    public void updateRow(int rowIndex, Vector<String> row) {
+        data.set(rowIndex, row);
+    }
+
     public boolean isCellEditable(int row, int col) {
         return false;
     }

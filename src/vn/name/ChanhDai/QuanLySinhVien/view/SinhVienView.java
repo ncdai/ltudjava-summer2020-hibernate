@@ -8,6 +8,7 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,8 +24,12 @@ class GetSinhVienThread extends Thread {
     }
 
     public void run() {
-        String prevButtonText = this.buttonTarget.getText();
-        this.buttonTarget.setText("Đang tải ...");
+        String prevButtonText = null;
+
+        if (this.buttonTarget != null) {
+            prevButtonText = this.buttonTarget.getText();
+            this.buttonTarget.setText("Đang tải ...");
+        }
 
         List<SinhVien> list;
         if (maLop.equals("all") || maLop.equals("")) {
@@ -41,52 +46,154 @@ class GetSinhVienThread extends Thread {
             model.removeRow(0);
         }
 
-        Vector<String> row;
         for (SinhVien sinhVien : list) {
-            row = new Vector<>();
-            row.add(sinhVien.getMaSinhVien());
-            row.add(sinhVien.getHoTen());
-            row.add(sinhVien.getGioiTinh());
-            row.add(sinhVien.getCmnd());
-            row.add(sinhVien.getMaLop());
-
-            model.addRow(row);
+            model.addRow(sinhVien.toVector());
         }
 
         model.fireTableDataChanged();
 
-        this.buttonTarget.setText(prevButtonText);
+        if (this.buttonTarget != null) {
+            this.buttonTarget.setText(prevButtonText);
+        }
     }
 }
 
 public class SinhVienView {
-    JFrame sinhVienListFrame;
-    JTable sinhVienTable;
+    JFrame frame;
+    JTable tableSinhVien;
+    JButton buttonGetSinhVienList;
 
-    JTextField mssvInput;
-    JTextField hoTenInput;
-    JComboBox<String> selectGioiTinh;
-    JTextField cmndInput;
-    JTextField maLopInput;
+    JTextField textFieldMaSinhVien;
+    JTextField textFieldHoTen;
+    JComboBox<String> comboBoxGioiTinh;
+    JTextField textFieldCMND;
+    JTextField textFieldMaLop;
+
+    JRadioButton radioButtonUpdate;
+    JRadioButton radioButtonCreate;
+    JRadioButton radioButtonDelete;
 
     public SinhVienView() {
         createAndShowUI();
+        new GetSinhVienThread(tableSinhVien, "all", buttonGetSinhVienList).start();
     }
 
-    JLabel createFormLabel(String text) {
-        return new JLabel(text);
+    public void createSinhVien(SinhVien sinhVien) {
+        boolean success = SinhVienDAO.create(sinhVien);
+        if (success) {
+            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
+            tableModel.addRow(sinhVien.toVector());
+            tableModel.fireTableDataChanged();
+
+            JOptionPane.showMessageDialog(frame, "Thêm sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(frame, "Thêm sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
     }
 
-    JButton createButton(String text) {
-        return new JButton(text);
+    public void updateSinhVien(SinhVien sinhVien, int row) {
+        boolean success = SinhVienDAO.update(sinhVien);
+        if (success) {
+            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
+            tableModel.updateRow(row, sinhVien.toVector());
+            tableModel.fireTableDataChanged();
+
+            JOptionPane.showMessageDialog(frame, "Cập nhật thông tin sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(frame, "Cập nhật thông tin sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void deleteSinhVien(SinhVien sinhVien, int row) {
+        int confirm = JOptionPane.showConfirmDialog(
+            frame,
+            "Bạn chắn chắn muốn xóa sinh viên " + sinhVien.getMaSinhVien() + "?",
+            "Warning",
+            JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        boolean success = SinhVienDAO.delete(sinhVien.getMaSinhVien());
+        if (success) {
+            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
+            tableModel.removeRow(row);
+            tableModel.fireTableDataChanged();
+            tableSinhVien.setRowSelectionInterval(0, 0);
+
+            JOptionPane.showMessageDialog(frame, "Xóa sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(frame, "Xóa sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public SinhVien getSeletedRow() {
+        SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
+
+        int rowIndex = tableSinhVien.getSelectedRow();
+
+        if (rowIndex == -1) {
+            return null;
+        }
+
+        String maSinhVien = tableModel.getValueAt(rowIndex, 0).toString();
+        String hoTen = tableModel.getValueAt(rowIndex, 1).toString();
+        String gioiTinh = tableModel.getValueAt(rowIndex, 2).toString();
+        String cmnd = tableModel.getValueAt(rowIndex, 3).toString();
+        String maLop = tableModel.getValueAt(rowIndex, 4).toString();
+
+        SinhVien sinhVien = new SinhVien();
+        sinhVien.setMaSinhVien(maSinhVien);
+        sinhVien.setHoTen(hoTen);
+        sinhVien.setGioiTinh(gioiTinh);
+        sinhVien.setCmnd(cmnd);
+        sinhVien.setMaLop(maLop);
+
+        return sinhVien;
+    }
+
+    public void setFormValuesBySeletedRow() {
+        SinhVien sinhVien = getSeletedRow();
+        if (sinhVien == null) return;
+
+        this.setFormValues(
+            sinhVien.getMaSinhVien(),
+            sinhVien.getHoTen(),
+            sinhVien.getGioiTinh(),
+            sinhVien.getCmnd(),
+            sinhVien.getMaLop()
+        );
+    }
+
+    public void setFormEnabled(boolean enabled) {
+        textFieldMaSinhVien.setEnabled(enabled);
+        textFieldHoTen.setEnabled(enabled);
+        comboBoxGioiTinh.setEnabled(enabled);
+        textFieldCMND.setEnabled(enabled);
+        textFieldMaLop.setEnabled(enabled);
+    }
+
+    public void setFormValues(String maSinhVien, String hoTen, String gioiTinh, String cmnd, String maLop) {
+        textFieldMaSinhVien.setText(maSinhVien);
+        textFieldHoTen.setText(hoTen);
+        comboBoxGioiTinh.setSelectedItem(gioiTinh);
+        textFieldCMND.setText(cmnd);
+        textFieldMaLop.setText(maLop);
+    }
+
+    public void resetForm() {
+        this.setFormValues("", "", "", "", "");
     }
 
     public void createAndShowUI() {
-        this.sinhVienListFrame = new JFrame();
-        this.sinhVienListFrame.setTitle("Danh Sách Sinh Viên");
+        frame = new JFrame();
+        frame.setTitle("Danh Sách Sinh Viên");
 
         BorderLayout layout = new BorderLayout();
-        this.sinhVienListFrame.setLayout(layout);
+        frame.setLayout(layout);
 
         JLabel title = new JLabel("Danh Sách Sinh Viên");
         title.setFont(new Font("Serif", Font.BOLD, 24));
@@ -95,27 +202,27 @@ public class SinhVienView {
 
         JLabel labelFilter = new JLabel("Lọc theo lớp");
 
-        SimpleComboBoxItem[] maLopList = new SimpleComboBoxItem[] {
-                new SimpleComboBoxItem("all", "Tất cả"),
-                new SimpleComboBoxItem("17HCB", "17HCB"),
-                new SimpleComboBoxItem("18HCB", "18HCB")
+        SimpleComboBoxItem[] maLopList = new SimpleComboBoxItem[]{
+            new SimpleComboBoxItem("all", "Tất cả"),
+            new SimpleComboBoxItem("17HCB", "17HCB"),
+            new SimpleComboBoxItem("18HCB", "18HCB")
         };
 
         SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
 
-        JComboBox<SimpleComboBoxItem> maLopComboBox = new JComboBox<>(maLopModel);
-        maLopComboBox.addActionListener(e -> {
-            int index = maLopComboBox.getSelectedIndex();
+        JComboBox<SimpleComboBoxItem> comboBoxMaLop = new JComboBox<>(maLopModel);
+        comboBoxMaLop.addActionListener(e -> {
+            int index = comboBoxMaLop.getSelectedIndex();
             if (index != -1) {
-                System.out.println(maLopComboBox.getItemAt(index).getValue());
+                System.out.println(comboBoxMaLop.getItemAt(index).getValue());
             }
         });
 
-        JButton buttonGet = new JButton("Xem");
-        buttonGet.addActionListener(e -> {
-            SimpleComboBoxItem item = (SimpleComboBoxItem) maLopComboBox.getSelectedItem();
+        buttonGetSinhVienList = new JButton("Xem");
+        buttonGetSinhVienList.addActionListener(e -> {
+            SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             String maLop = item != null ? item.getValue() : "all";
-            new GetSinhVienThread(sinhVienTable, maLop, buttonGet).start();
+            new GetSinhVienThread(tableSinhVien, maLop, buttonGetSinhVienList).start();
         });
 
         JButton importCSVButton = new JButton("Import CSV");
@@ -126,8 +233,8 @@ public class SinhVienView {
         BoxLayout topMenuPanelLayout = new BoxLayout(topMenuPanel, BoxLayout.X_AXIS);
         topMenuPanel.setLayout(topMenuPanelLayout);
         topMenuPanel.add(labelFilter);
-        topMenuPanel.add(maLopComboBox);
-        topMenuPanel.add(buttonGet);
+        topMenuPanel.add(comboBoxMaLop);
+        topMenuPanel.add(buttonGetSinhVienList);
         topMenuPanel.add(Box.createHorizontalGlue());
         topMenuPanel.add(importCSVButton);
 
@@ -143,33 +250,22 @@ public class SinhVienView {
         columnNames.add("CMND");
         columnNames.add("Lớp");
 
-        sinhVienTable = new JTable(new SimpleTableModel(columnNames, null));
-        sinhVienTable.setFillsViewportHeight(true);
-        sinhVienTable.setAutoCreateColumnsFromModel(true);
+        tableSinhVien = new JTable(new SimpleTableModel(columnNames, null));
+        tableSinhVien.setFillsViewportHeight(true);
 
-        sinhVienTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        sinhVienTable.setDefaultEditor(Object.class, null);
+        tableSinhVien.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableSinhVien.setDefaultEditor(Object.class, null);
 
-        ListSelectionModel rowSM = sinhVienTable.getSelectionModel();
-        rowSM.addListSelectionListener(e -> {
-            SimpleTableModel tableModel = (SimpleTableModel) sinhVienTable.getModel();
-
-            int rowIndex = sinhVienTable.getSelectedRow();
-
-            String maSinhVien = tableModel.getValueAt(rowIndex, 0).toString();
-            String hoTen = tableModel.getValueAt(rowIndex, 1).toString();
-            String gioiTinh = tableModel.getValueAt(rowIndex, 2).toString();
-            String cmnd = tableModel.getValueAt(rowIndex, 3).toString();
-            String maLop = tableModel.getValueAt(rowIndex, 4).toString();
-
-            mssvInput.setText(maSinhVien);
-            hoTenInput.setText(hoTen);
-            selectGioiTinh.setSelectedItem(gioiTinh);
-            cmndInput.setText(cmnd);
-            maLopInput.setText(maLop);
+        ListSelectionModel selectionModel = tableSinhVien.getSelectionModel();
+        selectionModel.addListSelectionListener(e -> {
+            if (radioButtonCreate.isSelected()) {
+                resetForm();
+            } else {
+                setFormValuesBySeletedRow();
+            }
         });
 
-        JScrollPane scrollPane = new JScrollPane(sinhVienTable);
+        JScrollPane scrollPane = new JScrollPane(tableSinhVien);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel sidebarPanel = new JPanel();
@@ -186,105 +282,193 @@ public class SinhVienView {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.LINE_START;
+
+        radioButtonUpdate = new JRadioButton("Cập nhật");
+        radioButtonUpdate.setMnemonic(KeyEvent.VK_B);
+        radioButtonUpdate.setActionCommand("update");
+        radioButtonUpdate.setSelected(true);
+        radioButtonUpdate.addActionListener(e -> {
+            System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
+
+            resetForm();
+            setFormValuesBySeletedRow();
+
+            setFormEnabled(true);
+            textFieldMaSinhVien.setEnabled(false);
+        });
+
+        radioButtonCreate = new JRadioButton("Thêm");
+        radioButtonCreate.setMnemonic(KeyEvent.VK_C);
+        radioButtonCreate.setActionCommand("create");
+        radioButtonCreate.addActionListener(e -> {
+            System.out.println("radioButtonCreate " + radioButtonCreate.isSelected());
+
+            resetForm();
+            setFormEnabled(true);
+        });
+
+        radioButtonDelete = new JRadioButton("Xóa");
+        radioButtonDelete.setMnemonic(KeyEvent.VK_F);
+        radioButtonDelete.setActionCommand("delete");
+        radioButtonDelete.addActionListener(e -> {
+            System.out.println("radioButtonDelete " + radioButtonDelete.isSelected());
+
+            resetForm();
+            setFormEnabled(false);
+            setFormValuesBySeletedRow();
+        });
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(radioButtonUpdate);
+        buttonGroup.add(radioButtonCreate);
+        buttonGroup.add(radioButtonDelete);
+
         c.gridx = 0;
         c.gridy = 0;
-        c.ipadx = 0;
-        c.ipady = 8;
+        c.gridwidth = 1;
         c.insets = new Insets(8, 8, 0, 0);
-        c.gridwidth = 1;
-        form.add(createFormLabel("MSSV"), c);
+        form.add(radioButtonUpdate, c);
 
         c.gridx = 1;
         c.gridy = 0;
-        c.gridwidth = 2;
-        c.insets = new Insets(8, 0, 0, 8);
-        mssvInput = new JTextField();
-        form.add(mssvInput, c);
-
-        c.gridx = 0;
-        c.gridy = 1;
         c.gridwidth = 1;
-        c.insets = new Insets(0, 8, 0, 0);
-        form.add(createFormLabel("Họ và tên"), c);
-
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.insets = new Insets(0, 0, 0, 8);
-        hoTenInput = new JTextField();
-        form.add(hoTenInput, c);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 8, 0, 0);
-        form.add(createFormLabel("Giới tính"), c);
-
-        String[] gioiTinhList = {"Nam", "Nữ", "Khác"};
-        selectGioiTinh = new JComboBox<>(gioiTinhList);
-        c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 2;
-        c.insets = new Insets(0, 0, 0, 8);
-        form.add(selectGioiTinh, c);
-
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 8, 0, 0);
-        form.add(createFormLabel("CMND"), c);
-
-        c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 2;
-        c.insets = new Insets(0, 0, 0, 8);
-        cmndInput = new JTextField();
-        form.add(cmndInput, c);
-
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 8, 0, 0);
-        form.add(createFormLabel("Mã lớp"), c);
-
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 2;
-        c.insets = new Insets(0, 0, 0, 8);
-        maLopInput = new JTextField();
-        form.add(maLopInput, c);
-
-        JButton buttonDelete = createButton("Xóa");
-        JButton buttonCreate = createButton("Thêm");
-        JButton buttonUpdate = createButton("Cập nhật");
-
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 1;
-        c.insets = new Insets(16, 8, 8, 0);
-        form.add(buttonDelete, c);
-
-        c.gridx = 1;
-        c.gridy = 5;
-        c.gridwidth = 1;
-        c.insets = new Insets(16, 0, 8, 0);
-        form.add(buttonCreate, c);
+        c.insets = new Insets(8, 0, 0, 0);
+        form.add(radioButtonCreate, c);
 
         c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.insets = new Insets(8, 0, 0, 8);
+        form.add(radioButtonDelete, c);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.ipadx = 0;
+        c.ipady = 8;
+        c.insets = new Insets(0, 8, 0, 0);
+        c.gridwidth = 1;
+        form.add(new JLabel("MSSV"), c);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 8);
+        textFieldMaSinhVien = new JTextField();
+        textFieldMaSinhVien.setEnabled(false);
+        form.add(textFieldMaSinhVien, c);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 8, 0, 0);
+        form.add(new JLabel("Họ và tên"), c);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 8);
+        textFieldHoTen = new JTextField();
+        form.add(textFieldHoTen, c);
+
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 8, 0, 0);
+        form.add(new JLabel("Giới tính"), c);
+
+        String[] gioiTinhList = {"Nam", "Nữ", "Khác"};
+        comboBoxGioiTinh = new JComboBox<>(gioiTinhList);
+        c.gridx = 1;
+        c.gridy = 3;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 8);
+        form.add(comboBoxGioiTinh, c);
+
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 8, 0, 0);
+        form.add(new JLabel("CMND"), c);
+
+        c.gridx = 1;
+        c.gridy = 4;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 8);
+        textFieldCMND = new JTextField();
+        form.add(textFieldCMND, c);
+
+        c.gridx = 0;
         c.gridy = 5;
         c.gridwidth = 1;
-        c.insets = new Insets(16, 0, 8, 8);
-        form.add(buttonUpdate, c);
+        c.insets = new Insets(0, 8, 0, 0);
+        form.add(new JLabel("Mã lớp"), c);
+
+        c.gridx = 1;
+        c.gridy = 5;
+        c.gridwidth = 2;
+        c.insets = new Insets(0, 0, 0, 8);
+        textFieldMaLop = new JTextField();
+        form.add(textFieldMaLop, c);
+
+        JButton buttonSubmit = new JButton("Thực hiện");
+        buttonSubmit.addActionListener(e -> {
+            String maSinhVien = textFieldMaSinhVien.getText();
+            String hoTen = textFieldHoTen.getText();
+            String gioiTinh = (String) comboBoxGioiTinh.getSelectedItem();
+            String cmnd = textFieldCMND.getText();
+            String maLop = textFieldMaLop.getText();
+
+            if (maSinhVien.equals("") || hoTen.equals("") || gioiTinh == null || gioiTinh.equals("") || cmnd.equals("") || maLop.equals("")) {
+                JOptionPane.showMessageDialog(frame, "Bạn chưa nhập đủ thông tin!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            SinhVien sinhVien = new SinhVien();
+            sinhVien.setMaSinhVien(maSinhVien);
+            sinhVien.setHoTen(hoTen);
+            sinhVien.setGioiTinh(gioiTinh);
+            sinhVien.setCmnd(cmnd);
+            sinhVien.setMaLop(maLop);
+            sinhVien.setMatKhau(maSinhVien);
+
+            int rowSelectedIndex = tableSinhVien.getSelectedRow();
+
+            if (radioButtonCreate.isSelected()) {
+
+                // Create
+                System.out.println("buttonSubmit -> Create");
+                createSinhVien(sinhVien);
+
+            } else if (radioButtonUpdate.isSelected()) {
+
+                // Update
+                System.out.println("buttonSubmit -> Update");
+                updateSinhVien(sinhVien, rowSelectedIndex);
+
+            } else if (radioButtonDelete.isSelected()) {
+
+                // Delete
+                System.out.println("buttonSubmit -> Delete");
+                deleteSinhVien(sinhVien, rowSelectedIndex);
+            }
+
+        });
+
+        c.gridx = 0;
+        c.gridy = 6;
+        c.gridwidth = 3;
+        c.insets = new Insets(8, 8, 8, 8);
+        form.add(buttonSubmit, c);
 
         sidebarPanel.add(formPanel);
 
-        Container pane = this.sinhVienListFrame.getContentPane();
+        Container pane = frame.getContentPane();
         pane.add(headerPanel, BorderLayout.PAGE_START);
         pane.add(centerPanel, BorderLayout.CENTER);
         pane.add(sidebarPanel, BorderLayout.LINE_END);
 
-        this.sinhVienListFrame.pack();
-        this.sinhVienListFrame.setLocationRelativeTo(null);
-        this.sinhVienListFrame.setVisible(true);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

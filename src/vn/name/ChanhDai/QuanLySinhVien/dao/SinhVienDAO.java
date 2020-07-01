@@ -30,8 +30,13 @@ public class SinhVienDAO {
         return sv;
     }
 
-    public static boolean create(SinhVien sv) {
-        return HibernateUtils.insertRow(sv);
+    public static boolean create(SinhVien sinhVien) {
+        if (HibernateUtils.getRow(SinhVien.class, sinhVien.getMaSinhVien()) != null) {
+            // Sinh vien da ton tai
+            System.out.println("SinhVien(" + sinhVien.getMaSinhVien() + ") da ton tai!");
+            return false;
+        }
+        return HibernateUtils.insertRow(sinhVien);
     }
 
     public static boolean update(SinhVien sinhVien) {

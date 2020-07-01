@@ -1,6 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.entity;
 
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * vn.edu.hcmus.fit.sv18120113.QuanLySinhVien
@@ -72,5 +73,27 @@ public class SinhVien {
 
     public void setDanhSachLop(Set<LopOfMon> danhSachLop) {
         this.danhSachLop = danhSachLop;
+    }
+
+    @Override
+    public String toString() {
+        return "SinhVien{" +
+            "maSinhVien='" + maSinhVien + '\'' +
+            ", hoTen='" + hoTen + '\'' +
+            ", gioiTinh='" + gioiTinh + '\'' +
+            ", cmnd='" + cmnd + '\'' +
+            ", matKhau='" + matKhau + '\'' +
+            ", maLop='" + maLop + '\'' +
+            '}';
+    }
+
+    public Vector<String> toVector() {
+        Vector<String> newRow = new Vector<>();
+        newRow.add(getMaSinhVien());
+        newRow.add(getHoTen());
+        newRow.add(getGioiTinh());
+        newRow.add(getCmnd());
+        newRow.add(getMaLop());
+        return newRow;
     }
 }

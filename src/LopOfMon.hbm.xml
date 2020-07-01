@@ -1,13 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC
-        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
     <class
-            name="vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon"
-            table="LopOfMon"
-            schema="QuanLySinhVien"
+        name="vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon"
+        table="LopOfMon"
+        schema="QuanLySinhVien"
     >
         <id name="id" column="id">
             <generator class="increment"/>
@@ -20,19 +20,19 @@
         <property name="diemTong" column="diemTong"/>
 
         <many-to-one
-                name="sinhVien"
-                class="vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien"
-                fetch="join"
-                lazy="false"
+            name="sinhVien"
+            class="vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien"
+            fetch="join"
+            lazy="false"
         >
             <column name="maSinhVien" unique="true"/>
         </many-to-one>
 
         <many-to-one
-                name="mon"
-                class="vn.name.ChanhDai.QuanLySinhVien.entity.Mon"
-                fetch="join"
-                lazy="false"
+            name="mon"
+            class="vn.name.ChanhDai.QuanLySinhVien.entity.Mon"
+            fetch="join"
+            lazy="false"
         >
             <column name="maMon" unique="true"/>
         </many-to-one>

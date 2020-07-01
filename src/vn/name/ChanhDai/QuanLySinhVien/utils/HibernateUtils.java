@@ -55,7 +55,7 @@ public class HibernateUtils {
         return list;
     }
 
-    public static <T> T querySingle(Class<T> tClass, String hqlString, Map<String,String> hqlParameters) {
+    public static <T> T querySingle(Class<T> tClass, String hqlString, Map<String, String> hqlParameters) {
         List<T> lomList = HibernateUtils.queryList(tClass, hqlString, hqlParameters);
 
         if (lomList.size() > 0) {
