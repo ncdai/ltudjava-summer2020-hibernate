@@ -27,25 +27,14 @@ public class Example {
         List<String[]> danhSachLop = CSVUtils.reader("sinhVien_17HCB.csv");
 
         for (String[] item : danhSachLop) {
-            String maLop = item[0];
-            String maSinhVien = item[1];
-            String hoTen = item[2];
-            String gioiTinh = item[3];
-            String cmnd = item[4];
-
-            SinhVien sv = new SinhVien();
-            sv.setMaLop(maLop);
-            sv.setMaSinhVien(maSinhVien);
-            sv.setHoTen(hoTen);
-            sv.setGioiTinh(gioiTinh);
-            sv.setCmnd(cmnd);
-            sv.setMatKhau(maSinhVien);
-
-            boolean res = SinhVienDAO.create(sv);
-            if (res) {
-                System.out.println("Them SinhVien " + maSinhVien + " thanh cong!");
-            } else {
-                System.out.println("Them SinhVien " + maSinhVien + " that bai!");
+            SinhVien sv = CSVUtils.parseSinhVien(item);
+            if (sv != null) {
+                boolean res = SinhVienDAO.create(sv);
+                if (res) {
+                    System.out.println("Them SinhVien " + sv.getMaSinhVien() + " thanh cong!");
+                } else {
+                    System.out.println("Them SinhVien " + sv.getMaSinhVien() + " that bai!");
+                }
             }
         }
     }
@@ -69,7 +58,7 @@ public class Example {
     }
 
     public static void importThoiKhoaBieuExample() {
-        List<String[]> thoiKhoaBieu = CSVUtils.reader("thoiKhoaBieu_17HCB.csv");
+        List<String[]> thoiKhoaBieu = CSVUtils.reader("data/thoiKhoaBieu_17HCB.csv");
         for (String[] item : thoiKhoaBieu) {
             String maLop = item[0];
             String maMon = item[1];
@@ -379,7 +368,7 @@ public class Example {
 //        getSinhVienExample();
 
         // 11. Login ...
-        loginAsSinhVienExample();
+//        loginAsSinhVienExample();
 
         // 12. Sửa thông tin sinh viên
 //        updateSinhVienExample();
@@ -388,5 +377,10 @@ public class Example {
 //        getSinhVienListExample();
 //        deleteSinhVienExample();
 //        getMonListExample();
+
+        List<String> list = SinhVienDAO.getLopList();
+        for (String item : list) {
+            System.out.println(item);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,5 +37,25 @@ public class CSVUtils {
         }
 
         return data;
+    }
+
+    public static SinhVien parseSinhVien(String[] item) {
+        if (item.length < 5) return null;
+
+        String maLop = item[0];
+        String maSinhVien = item[1];
+        String hoTen = item[2];
+        String gioiTinh = item[3];
+        String cmnd = item[4];
+
+        SinhVien sv = new SinhVien();
+        sv.setMaLop(maLop);
+        sv.setMaSinhVien(maSinhVien);
+        sv.setHoTen(hoTen);
+        sv.setGioiTinh(gioiTinh);
+        sv.setCmnd(cmnd);
+        sv.setMatKhau(maSinhVien);
+
+        return sv;
     }
 }

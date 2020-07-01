@@ -86,14 +86,4 @@ public class SinhVien {
             ", maLop='" + maLop + '\'' +
             '}';
     }
-
-    public Vector<String> toVector() {
-        Vector<String> newRow = new Vector<>();
-        newRow.add(getMaSinhVien());
-        newRow.add(getHoTen());
-        newRow.add(getGioiTinh());
-        newRow.add(getCmnd());
-        newRow.add(getMaLop());
-        return newRow;
-    }
 }

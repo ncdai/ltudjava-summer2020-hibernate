@@ -1,8 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.view;
 
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxItem;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxModel;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleTableModel;
+import vn.name.ChanhDai.QuanLySinhVien.utils.*;
 import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
@@ -33,25 +31,80 @@ class GetSinhVienThread extends Thread {
         SimpleTableModel model = (SimpleTableModel) table.getModel();
 
         // Reset Table
-        int totalRow = model.getRowCount();
-        for (int i = 0; i < totalRow; ++i) {
-            model.removeRow(0);
-        }
+        model.clearRows();
 
         for (SinhVien sinhVien : list) {
-            model.addRow(sinhVien.toVector());
+            model.addRow(TableUtils.toRow(sinhVien));
         }
 
         model.fireTableDataChanged();
     }
 }
 
+class ImportCSVThread extends Thread {
+    JTable tableDraft;
+    JTable tableTarget;
+
+    ImportCSVThread(JTable tableDraft, JTable tableTarget) {
+        this.tableDraft = tableDraft;
+        this.tableTarget = tableTarget;
+    }
+
+    @Override
+    public void run() {
+        SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
+        SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
+
+        int desiredImportQuantity = tableDraftModel.getRowCount();
+        int actualImportQuantity = 0;
+
+        for (int i = 0; i < desiredImportQuantity; ++i) {
+            SinhVien sinhVien = TableUtils.parseSinhVien(tableDraftModel.getRow(i));
+
+            boolean success = SinhVienDAO.create(sinhVien);
+            if (success) {
+                tableDraftModel.setValueAt( i, 5, "[SUCCESS]");
+                tableTargetModel.addRow(TableUtils.toRow(sinhVien));
+                ++actualImportQuantity;
+            } else {
+                tableDraftModel.setValueAt( i, 5, "[FAILED]");
+            }
+
+            tableDraftModel.fireTableDataChanged();
+            tableTargetModel.fireTableDataChanged();
+        }
+
+        JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " sinh viên)", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+    }
+}
+
+class GetComboBoxMaLopThread extends Thread {
+    JComboBox<SimpleComboBoxItem> comboBox;
+
+    GetComboBoxMaLopThread(JComboBox<SimpleComboBoxItem> comboBox) {
+        this.comboBox = comboBox;
+    }
+
+    @Override
+    public void run() {
+        List<String> list = SinhVienDAO.getLopList();
+        SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
+        for (String item : list) {
+            model.addElement(new SimpleComboBoxItem(item, item));
+        }
+    }
+}
+
 public class SinhVienView {
-    JFrame frame;
-//    JFrame importCSVFrame;
+    JFrame mainFrame;
+    JFrame importCSVFrame;
 
     JTable tableSinhVien;
-    final JFileChooser fileChooser = new JFileChooser();
+    JTable tablePreview;
+
+    JComboBox<SimpleComboBoxItem> comboBoxMaLop;
+
+    JFileChooser fileChooser = new JFileChooser();
 
     JTextField textFieldMaSinhVien;
     JTextField textFieldHoTen;
@@ -65,6 +118,9 @@ public class SinhVienView {
 
     public SinhVienView() {
         createAndShowUI();
+        createImportCSVUI();
+
+        new GetComboBoxMaLopThread(comboBoxMaLop).start();
         new GetSinhVienThread(tableSinhVien, "all").start();
     }
 
@@ -72,35 +128,35 @@ public class SinhVienView {
         boolean success = SinhVienDAO.create(sinhVien);
         if (success) {
             SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-            tableModel.addRow(sinhVien.toVector());
+            tableModel.addRow(TableUtils.toRow(sinhVien));
             tableModel.fireTableDataChanged();
 
-            JOptionPane.showMessageDialog(frame, "Thêm sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Thêm sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(frame, "Thêm sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Thêm sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public void updateSinhVien(SinhVien sinhVien, int row) {
         boolean success = SinhVienDAO.update(sinhVien);
         if (success) {
             SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-            tableModel.updateRow(row, sinhVien.toVector());
+            tableModel.updateRow(row, TableUtils.toRow(sinhVien));
             tableModel.fireTableDataChanged();
 
-            JOptionPane.showMessageDialog(frame, "Cập nhật thông tin sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(frame, "Cập nhật thông tin sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public void deleteSinhVien(SinhVien sinhVien, int row) {
         int confirm = JOptionPane.showConfirmDialog(
-            frame,
+            mainFrame,
             "Bạn chắn chắn muốn xóa sinh viên " + sinhVien.getMaSinhVien() + "?",
-            "Warning",
+            "Xác nhận",
             JOptionPane.OK_CANCEL_OPTION
         );
 
@@ -111,38 +167,33 @@ public class SinhVienView {
             SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
             tableModel.removeRow(row);
             tableModel.fireTableDataChanged();
-            tableSinhVien.setRowSelectionInterval(0, 0);
+            if (tableModel.getRowCount() > 0) {
+                tableSinhVien.setRowSelectionInterval(0, 0);
+            }
 
-            JOptionPane.showMessageDialog(frame, "Xóa sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Xóa sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(frame, "Xóa sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Xóa sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public SinhVien getSeletedRow() {
-        SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-
         int rowIndex = tableSinhVien.getSelectedRow();
-
         if (rowIndex == -1) {
             return null;
         }
 
-        String maSinhVien = tableModel.getValueAt(rowIndex, 0).toString();
-        String hoTen = tableModel.getValueAt(rowIndex, 1).toString();
-        String gioiTinh = tableModel.getValueAt(rowIndex, 2).toString();
-        String cmnd = tableModel.getValueAt(rowIndex, 3).toString();
-        String maLop = tableModel.getValueAt(rowIndex, 4).toString();
+        SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
+        return TableUtils.parseSinhVien(tableModel.getRow(rowIndex));
+    }
 
-        SinhVien sinhVien = new SinhVien();
-        sinhVien.setMaSinhVien(maSinhVien);
-        sinhVien.setHoTen(hoTen);
-        sinhVien.setGioiTinh(gioiTinh);
-        sinhVien.setCmnd(cmnd);
-        sinhVien.setMaLop(maLop);
-
-        return sinhVien;
+    public void setFormValues(String maSinhVien, String hoTen, String gioiTinh, String cmnd, String maLop) {
+        textFieldMaSinhVien.setText(maSinhVien);
+        textFieldHoTen.setText(hoTen);
+        comboBoxGioiTinh.setSelectedItem(gioiTinh);
+        textFieldCMND.setText(cmnd);
+        textFieldMaLop.setText(maLop);
     }
 
     public void setFormValuesBySeletedRow() {
@@ -166,62 +217,123 @@ public class SinhVienView {
         textFieldMaLop.setEnabled(enabled);
     }
 
-    public void setFormValues(String maSinhVien, String hoTen, String gioiTinh, String cmnd, String maLop) {
-        textFieldMaSinhVien.setText(maSinhVien);
-        textFieldHoTen.setText(hoTen);
-        comboBoxGioiTinh.setSelectedItem(gioiTinh);
-        textFieldCMND.setText(cmnd);
-        textFieldMaLop.setText(maLop);
+    public void resetForm() {
+        setFormValues("", "", "", "", "");
     }
 
-    public void resetForm() {
-        this.setFormValues("", "", "", "", "");
+    public void createImportCSVUI() {
+        importCSVFrame = new JFrame();
+        importCSVFrame.setTitle("Nhập File CSV");
+
+        BorderLayout borderLayout = new BorderLayout(0, 8);
+        importCSVFrame.setLayout(borderLayout);
+
+        JPanel panelHeader = new JPanel();
+        panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.X_AXIS));
+        panelHeader.setBackground(Color.WHITE);
+        panelHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+
+        JButton buttonChooseAnotherFile = new JButton("Chọn File khác");
+        JButton buttonImport = new JButton("Bắt đầu nhập");
+
+        panelHeader.add(new JLabel("Xem trước"));
+        panelHeader.add(Box.createHorizontalGlue());
+        panelHeader.add(buttonChooseAnotherFile);
+        panelHeader.add(Box.createRigidArea(new Dimension(8,0)));
+        panelHeader.add(buttonImport);
+
+        tablePreview = new JTable();
+
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("MSSV");
+        columnNames.add("Họ tên");
+        columnNames.add("Giới tính");
+        columnNames.add("CMND");
+        columnNames.add("Lớp");
+        columnNames.add("Trạng thái");
+
+        tablePreview.setModel(new SimpleTableModel(columnNames, null));
+        tablePreview.setFillsViewportHeight(true);
+
+        JScrollPane scrollPane = new JScrollPane(tablePreview);
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+
+        Container contentPance = importCSVFrame.getContentPane();
+        contentPance.add(panelHeader, BorderLayout.PAGE_START);
+        contentPance.add(scrollPane, BorderLayout.CENTER);
+
+        buttonChooseAnotherFile.addActionListener(e -> {
+            handleImportCSVClick();
+        });
+
+        buttonImport.addActionListener(e -> {
+            new ImportCSVThread(tablePreview, tableSinhVien).start();
+        });
+
+        importCSVFrame.pack();
+        importCSVFrame.setLocationRelativeTo(null);
+    }
+
+    void handleImportCSVClick() {
+        int returnVal = fileChooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            System.out.println("File : " + file.getAbsolutePath());
+
+            SimpleTableModel tablePreviewModel = (SimpleTableModel) tablePreview.getModel();
+            tablePreviewModel.clearRows();
+
+            String fileName = file.getAbsolutePath();
+            List<String[]> list = CSVUtils.reader(fileName);
+            for (String[] item : list) {
+                SinhVien sinhVien = CSVUtils.parseSinhVien(item);
+                if (sinhVien != null) {
+                    Vector<String> row = TableUtils.toRow(sinhVien);
+                    row.add("[PENDING]");
+                    tablePreviewModel.addRow(row);
+                }
+            }
+
+            tablePreviewModel.fireTableDataChanged();
+            importCSVFrame.setVisible(true);
+        } else {
+            System.out.println("File : Cancel");
+        }
     }
 
     public void createAndShowUI() {
-        frame = new JFrame();
-        frame.setTitle("Danh Sách Sinh Viên");
+        mainFrame = new JFrame();
+        mainFrame.setTitle("Danh Sách Sinh Viên");
 
         BorderLayout layout = new BorderLayout();
-        frame.setLayout(layout);
+        mainFrame.setLayout(layout);
 
         JLabel title = new JLabel("Danh Sách Sinh Viên");
-        title.setFont(new Font("Serif", Font.BOLD, 24));
+        title.setFont(new Font("", Font.BOLD, 24));
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
         headerPanel.add(title);
 
-        JLabel labelFilter = new JLabel("Lọc theo lớp");
+        JLabel labelFilter = new JLabel("Xem lớp");
 
-        SimpleComboBoxItem[] maLopList = new SimpleComboBoxItem[]{
-            new SimpleComboBoxItem("all", "Tất cả"),
-            new SimpleComboBoxItem("17HCB", "17HCB"),
-            new SimpleComboBoxItem("18HCB", "18HCB")
-        };
+        Vector<SimpleComboBoxItem> maLopList = new Vector<>();
+        maLopList.add(new SimpleComboBoxItem("all", "Tất cả"));
 
         SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
 
-        JComboBox<SimpleComboBoxItem> comboBoxMaLop = new JComboBox<>(maLopModel);
+        comboBoxMaLop = new JComboBox<>(maLopModel);
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
+                System.out.println(item.getLabel() + " " + item.getValue());
                 String maLop = item.getValue();
                 new GetSinhVienThread(tableSinhVien, maLop).start();
             }
         });
 
-        JButton importCSVButton = new JButton("Import CSV");
-        importCSVButton.setPreferredSize(new Dimension(112, 24));
+        JButton importCSVButton = new JButton("Nhập File CSV");
+        importCSVButton.setPreferredSize(new Dimension(120, 24));
         importCSVButton.addActionListener(e -> {
-            int returnVal = fileChooser.showOpenDialog(frame);
-
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                System.out.println("Opening : " + file.getAbsolutePath() + ".");
-
-            } else {
-                System.out.println("Open command cancelled by user.");
-            }
+            handleImportCSVClick();
         });
 
         JPanel topMenuPanel = new JPanel();
@@ -284,9 +396,8 @@ public class SinhVienView {
         radioButtonUpdate = new JRadioButton("Cập nhật");
         radioButtonUpdate.setPreferredSize(new Dimension(96, 24));
         radioButtonUpdate.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonUpdate.setBackground(Color.GREEN);
-        radioButtonUpdate.setMnemonic(KeyEvent.VK_B);
-        radioButtonUpdate.setActionCommand("update");
+        radioButtonUpdate.setBackground(Color.decode("#f5f5f5"));
+//        radioButtonUpdate.setForeground(Color.WHITE);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -301,9 +412,8 @@ public class SinhVienView {
         radioButtonCreate = new JRadioButton("Thêm");
         radioButtonCreate.setPreferredSize(new Dimension(96, 24));
         radioButtonCreate.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonCreate.setMnemonic(KeyEvent.VK_C);
-        radioButtonCreate.setBackground(Color.CYAN);
-        radioButtonCreate.setActionCommand("create");
+        radioButtonCreate.setBackground(Color.decode("#f5f5f5"));
+//        radioButtonCreate.setForeground(Color.WHITE);
         radioButtonCreate.addActionListener(e -> {
             System.out.println("radioButtonCreate " + radioButtonCreate.isSelected());
 
@@ -314,9 +424,8 @@ public class SinhVienView {
         radioButtonDelete = new JRadioButton("Xóa");
         radioButtonDelete.setPreferredSize(new Dimension(96, 24));
         radioButtonDelete.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonDelete.setBackground(Color.RED);
-        radioButtonDelete.setMnemonic(KeyEvent.VK_F);
-        radioButtonDelete.setActionCommand("delete");
+        radioButtonDelete.setBackground(Color.decode("#f5f5f5"));
+//        radioButtonDelete.setForeground(Color.WHITE);
         radioButtonDelete.addActionListener(e -> {
             System.out.println("radioButtonDelete " + radioButtonDelete.isSelected());
 
@@ -414,7 +523,7 @@ public class SinhVienView {
             String maLop = textFieldMaLop.getText();
 
             if (maSinhVien.equals("") || hoTen.equals("") || gioiTinh == null || gioiTinh.equals("") || cmnd.equals("") || maLop.equals("")) {
-                JOptionPane.showMessageDialog(frame, "Bạn chưa nhập đủ thông tin!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainFrame, "Bạn chưa nhập đủ thông tin!", "Thông báo", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -457,13 +566,13 @@ public class SinhVienView {
 
         sidebarPanel.add(formPanel);
 
-        Container pane = frame.getContentPane();
+        Container pane = mainFrame.getContentPane();
         pane.add(headerPanel, BorderLayout.PAGE_START);
         pane.add(centerPanel, BorderLayout.CENTER);
         pane.add(sidebarPanel, BorderLayout.LINE_END);
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
     }
 }

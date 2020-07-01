@@ -1,6 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
 import javax.swing.*;
+import java.util.Vector;
 
 /**
  * vn.name.ChanhDai.QuanLySinhVien.utils
@@ -10,7 +11,7 @@ import javax.swing.*;
  * @description
  */
 public class SimpleComboBoxModel extends DefaultComboBoxModel<SimpleComboBoxItem> {
-    public SimpleComboBoxModel(SimpleComboBoxItem[] items) {
+    public SimpleComboBoxModel(Vector<SimpleComboBoxItem> items) {
         super(items);
     }
 

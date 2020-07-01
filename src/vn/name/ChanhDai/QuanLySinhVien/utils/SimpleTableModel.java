@@ -12,11 +12,11 @@ import java.util.Vector;
  */
 public class SimpleTableModel extends AbstractTableModel {
     private final Vector<String> columnNames;
-    private final Vector<Vector<String>> data;
+    private final Vector<Vector<String>> rowData;
 
-    public SimpleTableModel(Vector<String> columnNames, Vector<Vector<String>> data) {
+    public SimpleTableModel(Vector<String> columnNames, Vector<Vector<String>> rowData) {
         this.columnNames = columnNames != null ? columnNames : new Vector<>();
-        this.data = data != null ? data : new Vector<>();
+        this.rowData = rowData != null ? rowData : new Vector<>();
     }
 
     public int getColumnCount() {
@@ -24,32 +24,50 @@ public class SimpleTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
-        return data.size();
+        return rowData.size();
     }
 
-    public String getColumnName(int col) {
-        return columnNames.get(col);
+    public String getColumnName(int colIndex) {
+        if (columnNames.size() - 1 < colIndex) return null;
+        return columnNames.get(colIndex);
     }
 
     public Object getValueAt(int row, int col) {
-        if (0 <= row && row <= data.size() - 1) {
-            return data.get(row).get(col);
+        if (0 <= row && row <= rowData.size() - 1) {
+            return rowData.get(row).get(col);
         }
         return "";
     }
 
+    public void setValueAt(int rowIndex, int columnIndex, String value) {
+        if (rowData.size() - 1 < rowIndex) return;
+        Vector<String> row = rowData.get(rowIndex);
+
+        if (row.size() - 1 < columnIndex) return;
+        row.set(columnIndex, value);
+    }
+
+    public Vector<String> getRow(int rowIndex) {
+        if (rowData.size() - 1 < rowIndex) return null;
+        return rowData.get(rowIndex);
+    }
+
     public void addRow(Vector<String> row) {
-        data.add(row);
-//        int index = data.size() - 1;
-//        fireTableRowsInserted(index, index);
+        rowData.add(row);
+    }
+
+    public void clearRows() {
+        rowData.clear();
     }
 
     public void removeRow(int rowIndex) {
-        data.remove(rowIndex);
+        if (rowData.size() - 1 < rowIndex) return;
+        rowData.remove(rowIndex);
     }
 
     public void updateRow(int rowIndex, Vector<String> row) {
-        data.set(rowIndex, row);
+        if (rowData.size() - 1 < rowIndex) return;
+        rowData.set(rowIndex, row);
     }
 
     public boolean isCellEditable(int row, int col) {

@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ public class SinhVienDAO {
             System.out.println("SinhVien(" + sinhVien.getMaSinhVien() + ") da ton tai!");
             return false;
         }
+
+        // Mat khau mac dinh la MSSV
+        sinhVien.setMatKhau(sinhVien.getMaSinhVien());
         return HibernateUtils.insertRow(sinhVien);
     }
 
@@ -83,5 +87,13 @@ public class SinhVienDAO {
         params.put("matKhau", matKhau);
 
         return HibernateUtils.querySingle(SinhVien.class, hql, params) != null;
+    }
+
+    public static List<String> getLopList() {
+        // language=HQL
+        String hql = "select distinct sv.maLop from SinhVien sv";
+        Map<String, String> params = new HashMap<>();
+
+        return HibernateUtils.queryList(String.class, hql, params);
     }
 }
