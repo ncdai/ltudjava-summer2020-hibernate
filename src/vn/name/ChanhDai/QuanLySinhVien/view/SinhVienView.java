@@ -13,27 +13,37 @@ import java.util.Vector;
 
 class GetSinhVienThread extends Thread {
     JTable table;
-    JButton button;
+    String maLop;
+    JButton buttonTarget;
 
-    public GetSinhVienThread(JTable table, JButton button) {
+    public GetSinhVienThread(JTable table, String maLop, JButton buttonTarget) {
         this.table = table;
-        this.button = button;
+        this.maLop = maLop;
+        this.buttonTarget = buttonTarget;
     }
 
     public void run() {
-        String prevButtonText = this.button.getText();
-        this.button.setText("Getting ...");
-        List<SinhVien> list = SinhVienDAO.getList();
+        String prevButtonText = this.buttonTarget.getText();
+        this.buttonTarget.setText("Đang tải ...");
+
+        List<SinhVien> list;
+        if (maLop.equals("all") || maLop.equals("")) {
+            list = SinhVienDAO.getList();
+        } else {
+            list = SinhVienDAO.getListByMaLop(maLop);
+        }
 
         SimpleTableModel model = (SimpleTableModel) table.getModel();
 
+        // Reset Table
         int totalRow = model.getRowCount();
         for (int i = 0; i < totalRow; ++i) {
             model.removeRow(0);
         }
 
+        Vector<String> row;
         for (SinhVien sinhVien : list) {
-            Vector<String> row = new Vector<>();
+            row = new Vector<>();
             row.add(sinhVien.getMaSinhVien());
             row.add(sinhVien.getHoTen());
             row.add(sinhVien.getGioiTinh());
@@ -45,7 +55,7 @@ class GetSinhVienThread extends Thread {
 
         model.fireTableDataChanged();
 
-        this.button.setText(prevButtonText);
+        this.buttonTarget.setText(prevButtonText);
     }
 }
 
@@ -83,6 +93,8 @@ public class SinhVienView {
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
         headerPanel.add(title);
 
+        JLabel labelFilter = new JLabel("Lọc theo lớp");
+
         SimpleComboBoxItem[] maLopList = new SimpleComboBoxItem[] {
                 new SimpleComboBoxItem("all", "Tất cả"),
                 new SimpleComboBoxItem("17HCB", "17HCB"),
@@ -91,17 +103,19 @@ public class SinhVienView {
 
         SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
 
-        JComboBox<SimpleComboBoxItem> selectMaLop = new JComboBox<>(maLopModel);
-        selectMaLop.addActionListener(e -> {
-            int index = selectMaLop.getSelectedIndex();
+        JComboBox<SimpleComboBoxItem> maLopComboBox = new JComboBox<>(maLopModel);
+        maLopComboBox.addActionListener(e -> {
+            int index = maLopComboBox.getSelectedIndex();
             if (index != -1) {
-                System.out.println(selectMaLop.getItemAt(index).getValue());
+                System.out.println(maLopComboBox.getItemAt(index).getValue());
             }
         });
 
         JButton buttonGet = new JButton("Xem");
         buttonGet.addActionListener(e -> {
-            new GetSinhVienThread(sinhVienTable, buttonGet).start();
+            SimpleComboBoxItem item = (SimpleComboBoxItem) maLopComboBox.getSelectedItem();
+            String maLop = item != null ? item.getValue() : "all";
+            new GetSinhVienThread(sinhVienTable, maLop, buttonGet).start();
         });
 
         JButton importCSVButton = new JButton("Import CSV");
@@ -111,7 +125,8 @@ public class SinhVienView {
         topMenuPanel.setBackground(Color.WHITE);
         BoxLayout topMenuPanelLayout = new BoxLayout(topMenuPanel, BoxLayout.X_AXIS);
         topMenuPanel.setLayout(topMenuPanelLayout);
-        topMenuPanel.add(selectMaLop);
+        topMenuPanel.add(labelFilter);
+        topMenuPanel.add(maLopComboBox);
         topMenuPanel.add(buttonGet);
         topMenuPanel.add(Box.createHorizontalGlue());
         topMenuPanel.add(importCSVButton);
