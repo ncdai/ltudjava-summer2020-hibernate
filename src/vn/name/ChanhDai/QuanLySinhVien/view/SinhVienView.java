@@ -1,5 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.view;
 
+import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxItem;
+import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxModel;
 import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleTableModel;
 import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
@@ -81,8 +83,21 @@ public class SinhVienView {
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
         headerPanel.add(title);
 
-        String[] maLopList = {"17HCB", "18HCB"};
-        JComboBox<String> selectMaLop = new JComboBox<>(maLopList);
+        SimpleComboBoxItem[] maLopList = new SimpleComboBoxItem[] {
+                new SimpleComboBoxItem("all", "Tất cả"),
+                new SimpleComboBoxItem("17HCB", "17HCB"),
+                new SimpleComboBoxItem("18HCB", "18HCB")
+        };
+
+        SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
+
+        JComboBox<SimpleComboBoxItem> selectMaLop = new JComboBox<>(maLopModel);
+        selectMaLop.addActionListener(e -> {
+            int index = selectMaLop.getSelectedIndex();
+            if (index != -1) {
+                System.out.println(selectMaLop.getItemAt(index).getValue());
+            }
+        });
 
         JButton buttonGet = new JButton("Xem");
         buttonGet.addActionListener(e -> {

@@ -5,7 +5,7 @@
 <hibernate-mapping>
 
     <class
-            name="vn.edu.hcmus.fit.sv18120113.QuanLySinhVien.entity.Mon"
+            name="vn.name.ChanhDai.QuanLySinhVien.entity.Mon"
             table="Mon"
             schema="QuanLySinhVien"
     >
