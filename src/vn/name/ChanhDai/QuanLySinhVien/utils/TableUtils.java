@@ -1,5 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
@@ -58,5 +59,25 @@ public class TableUtils {
         newRow.add(thoiKhoaBieu.getPhongHoc());
 
         return newRow;
+    }
+
+    public static Vector<String> toRow(LopOfMon lopOfMon) {
+        Vector<String> row = new Vector<>();
+
+//        columnNames.add("Mã Lớp");
+//        columnNames.add("Mã Môn");
+//        columnNames.add("Tên môn");
+//        columnNames.add("MSSV");
+//        columnNames.add("Họ và Tên");
+//        columnNames.add("Giới tính");
+
+        row.add(lopOfMon.getMaLop());
+        row.add(lopOfMon.getMon().getMaMon());
+        row.add(lopOfMon.getMon().getTenMon());
+        row.add(lopOfMon.getSinhVien().getMaSinhVien());
+        row.add(lopOfMon.getSinhVien().getHoTen());
+        row.add(lopOfMon.getSinhVien().getGioiTinh());
+
+        return row;
     }
 }

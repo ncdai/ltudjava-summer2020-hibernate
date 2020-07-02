@@ -30,6 +30,13 @@ public class LopOfMonDAO {
         return HibernateUtils.querySingle(LopOfMon.class, hql, params);
     }
 
+    public static List<LopOfMon> getList() {
+        // language=HQL
+        String hql = "select lom from LopOfMon lom";
+        Map<String, String> params = new HashMap<>();
+        return HibernateUtils.queryList(LopOfMon.class, hql, params);
+    }
+
     public static boolean create(LopOfMon item) {
         if (LopOfMonDAO.getSingleByMaSinhVienAndMaMon(item.getSinhVien().getMaSinhVien(), item.getMon().getMaMon()) != null) {
             // Da ton tai SinhVien[maSinhVien] hoc Mon[maMon]

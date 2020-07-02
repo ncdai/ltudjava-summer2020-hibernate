@@ -50,7 +50,7 @@ public class SinhVienView {
 
         public void run() {
             List<SinhVien> list;
-            if (maLop.equals("all") || maLop.equals("")) {
+            if (maLop.equals("all")) {
                 list = SinhVienDAO.getList();
             } else {
                 list = SinhVienDAO.getListByMaLop(maLop);
@@ -76,10 +76,20 @@ public class SinhVienView {
             this.comboBox = comboBox;
         }
 
+//        int getValueIndex(String value) {
+//            SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
+//            for (int i = 0; i < model.getSize(); ++i) {
+//                if (value.equals(model.getElementAt(i).getValue())) {
+//                    return i;
+//                }
+//            }
+//            return -1;
+//        }
+
         @Override
         public void run() {
             List<String> list = SinhVienDAO.getLopList();
-            SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
+            SimpleComboBoxModel model = (SimpleComboBoxModel) comboBox.getModel();
             for (String item : list) {
                 model.addElement(new SimpleComboBoxItem(item, item));
             }
@@ -97,8 +107,8 @@ public class SinhVienView {
 
         @Override
         public void run() {
-            SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
-            SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
+            SimpleTableModel tableDraftModel = (SimpleTableModel) tableDraft.getModel();
+            SimpleTableModel tableTargetModel = (SimpleTableModel) tableTarget.getModel();
 
             int desiredImportQuantity = tableDraftModel.getRowCount();
             int actualImportQuantity = 0;
@@ -108,11 +118,11 @@ public class SinhVienView {
 
                 boolean success = SinhVienDAO.create(sinhVien);
                 if (success) {
-                    tableDraftModel.setValueAt( i, 5, "[SUCCESS]");
+                    tableDraftModel.setValueAt(i, 5, "[SUCCESS]");
                     tableTargetModel.addRow(TableUtils.toRow(sinhVien));
                     ++actualImportQuantity;
                 } else {
-                    tableDraftModel.setValueAt( i, 5, "[FAILED]");
+                    tableDraftModel.setValueAt(i, 5, "[FAILED]");
                 }
 
                 tableDraftModel.fireTableDataChanged();
@@ -296,7 +306,7 @@ public class SinhVienView {
         BoxLayout topMenuPanelLayout = new BoxLayout(topMenuPanel, BoxLayout.X_AXIS);
         topMenuPanel.setLayout(topMenuPanelLayout);
         topMenuPanel.add(labelFilter);
-        topMenuPanel.add(Box.createRigidArea(new Dimension(8,0)));
+        topMenuPanel.add(Box.createRigidArea(new Dimension(8, 0)));
         topMenuPanel.add(comboBoxMaLop);
         topMenuPanel.add(Box.createHorizontalGlue());
         topMenuPanel.add(importCSVButton);
