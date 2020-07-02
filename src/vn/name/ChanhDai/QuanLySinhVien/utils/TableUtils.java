@@ -1,6 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
+import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
 import java.util.Vector;
 
@@ -23,17 +24,6 @@ public class TableUtils {
         return sinhVien;
     }
 
-//    public static SinhVien parseSinhVien(SimpleTableModel tableModel, int rowIndex) {
-//        SinhVien sinhVien = new SinhVien();
-//        sinhVien.setMaSinhVien(tableModel.getValueAt(rowIndex, 0).toString());
-//        sinhVien.setHoTen(tableModel.getValueAt(rowIndex, 1).toString());
-//        sinhVien.setGioiTinh(tableModel.getValueAt(rowIndex, 2).toString());
-//        sinhVien.setCmnd(tableModel.getValueAt(rowIndex, 3).toString());
-//        sinhVien.setMaLop(tableModel.getValueAt(rowIndex, 4).toString());
-//
-//        return sinhVien;
-//    }
-
     public static Vector<String> toRow(SinhVien sinhVien) {
         Vector<String> newRow = new Vector<>();
         newRow.add(sinhVien.getMaSinhVien());
@@ -41,6 +31,17 @@ public class TableUtils {
         newRow.add(sinhVien.getGioiTinh());
         newRow.add(sinhVien.getCmnd());
         newRow.add(sinhVien.getMaLop());
+        return newRow;
+    }
+
+    public static Vector<String> toRow(ThoiKhoaBieu thoiKhoaBieu) {
+        Vector<String> newRow = new Vector<>();
+        newRow.add(thoiKhoaBieu.getId() + "");
+        newRow.add(thoiKhoaBieu.getMaLop());
+        newRow.add(thoiKhoaBieu.getMon().getMaMon());
+        newRow.add(thoiKhoaBieu.getMon().getTenMon());
+        newRow.add(thoiKhoaBieu.getPhongHoc());
+
         return newRow;
     }
 }

@@ -1,6 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien;
 
 import vn.name.ChanhDai.QuanLySinhVien.view.SinhVienView;
+import vn.name.ChanhDai.QuanLySinhVien.view.ThoiKhoaBieuView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,8 @@ public class Main {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SinhVienView();
+                // new SinhVienView();
+                new ThoiKhoaBieuView();
             }
         });
     }

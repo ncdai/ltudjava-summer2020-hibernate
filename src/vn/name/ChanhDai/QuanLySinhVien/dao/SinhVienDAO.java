@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

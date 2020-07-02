@@ -36,6 +36,15 @@ public class ThoiKhoaBieuDAO {
         return HibernateUtils.queryList(ThoiKhoaBieu.class, hql, params);
     }
 
+    public static List<ThoiKhoaBieu> getList() {
+        // language=HQL
+        String hql = "select tkb from ThoiKhoaBieu tkb";
+
+        Map<String, String> params = new HashMap<>();
+
+        return HibernateUtils.queryList(ThoiKhoaBieu.class, hql, params);
+    }
+
     public static boolean create(ThoiKhoaBieu tkb) {
         if (getByMaMonAndMaLop(tkb.getMon().getMaMon(), tkb.getMaLop()) != null) {
             // Da ton tai
@@ -43,5 +52,13 @@ public class ThoiKhoaBieuDAO {
         }
 
         return HibernateUtils.insertRow(tkb);
+    }
+
+    public static List<String> getLopList() {
+        // language=HQL
+        String hql = "select distinct tkb.maLop from ThoiKhoaBieu tkb";
+        Map<String, String> params = new HashMap<>();
+
+        return HibernateUtils.queryList(String.class, hql, params);
     }
 }

@@ -6,94 +6,9 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Vector;
-
-class GetSinhVienThread extends Thread {
-    JTable table;
-    String maLop;
-
-    public GetSinhVienThread(JTable table, String maLop) {
-        this.table = table;
-        this.maLop = maLop;
-    }
-
-    public void run() {
-        List<SinhVien> list;
-        if (maLop.equals("all") || maLop.equals("")) {
-            list = SinhVienDAO.getList();
-        } else {
-            list = SinhVienDAO.getListByMaLop(maLop);
-        }
-
-        SimpleTableModel model = (SimpleTableModel) table.getModel();
-
-        // Reset Table
-        model.clearRows();
-
-        for (SinhVien sinhVien : list) {
-            model.addRow(TableUtils.toRow(sinhVien));
-        }
-
-        model.fireTableDataChanged();
-    }
-}
-
-class ImportCSVThread extends Thread {
-    JTable tableDraft;
-    JTable tableTarget;
-
-    ImportCSVThread(JTable tableDraft, JTable tableTarget) {
-        this.tableDraft = tableDraft;
-        this.tableTarget = tableTarget;
-    }
-
-    @Override
-    public void run() {
-        SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
-        SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
-
-        int desiredImportQuantity = tableDraftModel.getRowCount();
-        int actualImportQuantity = 0;
-
-        for (int i = 0; i < desiredImportQuantity; ++i) {
-            SinhVien sinhVien = TableUtils.parseSinhVien(tableDraftModel.getRow(i));
-
-            boolean success = SinhVienDAO.create(sinhVien);
-            if (success) {
-                tableDraftModel.setValueAt( i, 5, "[SUCCESS]");
-                tableTargetModel.addRow(TableUtils.toRow(sinhVien));
-                ++actualImportQuantity;
-            } else {
-                tableDraftModel.setValueAt( i, 5, "[FAILED]");
-            }
-
-            tableDraftModel.fireTableDataChanged();
-            tableTargetModel.fireTableDataChanged();
-        }
-
-        JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " sinh viên)", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
-
-class GetComboBoxMaLopThread extends Thread {
-    JComboBox<SimpleComboBoxItem> comboBox;
-
-    GetComboBoxMaLopThread(JComboBox<SimpleComboBoxItem> comboBox) {
-        this.comboBox = comboBox;
-    }
-
-    @Override
-    public void run() {
-        List<String> list = SinhVienDAO.getLopList();
-        SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
-        for (String item : list) {
-            model.addElement(new SimpleComboBoxItem(item, item));
-        }
-    }
-}
 
 public class SinhVienView {
     JFrame mainFrame;
@@ -122,6 +37,90 @@ public class SinhVienView {
 
         new GetComboBoxMaLopThread(comboBoxMaLop).start();
         new GetSinhVienThread(tableSinhVien, "all").start();
+    }
+
+    static class GetSinhVienThread extends Thread {
+        JTable table;
+        String maLop;
+
+        public GetSinhVienThread(JTable table, String maLop) {
+            this.table = table;
+            this.maLop = maLop;
+        }
+
+        public void run() {
+            List<SinhVien> list;
+            if (maLop.equals("all") || maLop.equals("")) {
+                list = SinhVienDAO.getList();
+            } else {
+                list = SinhVienDAO.getListByMaLop(maLop);
+            }
+
+            SimpleTableModel model = (SimpleTableModel) table.getModel();
+
+            // Reset Table
+            model.clearRows();
+
+            for (SinhVien sinhVien : list) {
+                model.addRow(TableUtils.toRow(sinhVien));
+            }
+
+            model.fireTableDataChanged();
+        }
+    }
+
+    static class GetComboBoxMaLopThread extends Thread {
+        JComboBox<SimpleComboBoxItem> comboBox;
+
+        GetComboBoxMaLopThread(JComboBox<SimpleComboBoxItem> comboBox) {
+            this.comboBox = comboBox;
+        }
+
+        @Override
+        public void run() {
+            List<String> list = SinhVienDAO.getLopList();
+            SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
+            for (String item : list) {
+                model.addElement(new SimpleComboBoxItem(item, item));
+            }
+        }
+    }
+
+    static class ImportCSVThread extends Thread {
+        JTable tableDraft;
+        JTable tableTarget;
+
+        ImportCSVThread(JTable tableDraft, JTable tableTarget) {
+            this.tableDraft = tableDraft;
+            this.tableTarget = tableTarget;
+        }
+
+        @Override
+        public void run() {
+            SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
+            SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
+
+            int desiredImportQuantity = tableDraftModel.getRowCount();
+            int actualImportQuantity = 0;
+
+            for (int i = 0; i < desiredImportQuantity; ++i) {
+                SinhVien sinhVien = TableUtils.parseSinhVien(tableDraftModel.getRow(i));
+
+                boolean success = SinhVienDAO.create(sinhVien);
+                if (success) {
+                    tableDraftModel.setValueAt( i, 5, "[SUCCESS]");
+                    tableTargetModel.addRow(TableUtils.toRow(sinhVien));
+                    ++actualImportQuantity;
+                } else {
+                    tableDraftModel.setValueAt( i, 5, "[FAILED]");
+                }
+
+                tableDraftModel.fireTableDataChanged();
+                tableTargetModel.fireTableDataChanged();
+            }
+
+            JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " sinh viên)", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void createSinhVien(SinhVien sinhVien) {
@@ -318,14 +317,14 @@ public class SinhVienView {
         Vector<SimpleComboBoxItem> maLopList = new Vector<>();
         maLopList.add(new SimpleComboBoxItem("all", "Tất cả"));
 
-        SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
-
-        comboBoxMaLop = new JComboBox<>(maLopModel);
+        comboBoxMaLop = new JComboBox<>(new SimpleComboBoxModel(maLopList));
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
-                System.out.println(item.getLabel() + " " + item.getValue());
+                String label = item.getLabel();
                 String maLop = item.getValue();
+                System.out.println("[label=" + label + "][value=" + maLop + "]");
+
                 new GetSinhVienThread(tableSinhVien, maLop).start();
             }
         });
@@ -397,7 +396,6 @@ public class SinhVienView {
         radioButtonUpdate.setPreferredSize(new Dimension(96, 24));
         radioButtonUpdate.setHorizontalAlignment(SwingConstants.CENTER);
         radioButtonUpdate.setBackground(Color.decode("#f5f5f5"));
-//        radioButtonUpdate.setForeground(Color.WHITE);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -413,7 +411,6 @@ public class SinhVienView {
         radioButtonCreate.setPreferredSize(new Dimension(96, 24));
         radioButtonCreate.setHorizontalAlignment(SwingConstants.CENTER);
         radioButtonCreate.setBackground(Color.decode("#f5f5f5"));
-//        radioButtonCreate.setForeground(Color.WHITE);
         radioButtonCreate.addActionListener(e -> {
             System.out.println("radioButtonCreate " + radioButtonCreate.isSelected());
 
@@ -425,7 +422,6 @@ public class SinhVienView {
         radioButtonDelete.setPreferredSize(new Dimension(96, 24));
         radioButtonDelete.setHorizontalAlignment(SwingConstants.CENTER);
         radioButtonDelete.setBackground(Color.decode("#f5f5f5"));
-//        radioButtonDelete.setForeground(Color.WHITE);
         radioButtonDelete.addActionListener(e -> {
             System.out.println("radioButtonDelete " + radioButtonDelete.isSelected());
 
