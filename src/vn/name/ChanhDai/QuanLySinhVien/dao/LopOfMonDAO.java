@@ -33,6 +33,7 @@ public class LopOfMonDAO {
     public static boolean create(LopOfMon item) {
         if (LopOfMonDAO.getSingleByMaSinhVienAndMaMon(item.getSinhVien().getMaSinhVien(), item.getMon().getMaMon()) != null) {
             // Da ton tai SinhVien[maSinhVien] hoc Mon[maMon]
+            System.out.println("Da ton tai SinhVien[" + item.getSinhVien().getMaSinhVien() + "] hoc Mon[" + item.getMon().getMaMon() + "]");
             return false;
         }
 

@@ -60,42 +60,44 @@ public class Example {
     public static void importThoiKhoaBieuExample() {
         List<String[]> thoiKhoaBieu = CSVUtils.reader("data/thoiKhoaBieu_17HCB.csv");
         for (String[] item : thoiKhoaBieu) {
-            String maLop = item[0];
-            String maMon = item[1];
-            String tenMon = item[2];
-            String phongHoc = item[3];
+//            String maLop = item[0];
+//            String maMon = item[1];
+//            String tenMon = item[2];
+//            String phongHoc = item[3];
+//
+//            Mon mon = new Mon();
+//            mon.setMaMon(maMon);
+//            mon.setTenMon(tenMon);
+//
+//            ThoiKhoaBieu tkb = new ThoiKhoaBieu();
+//            tkb.setMaLop(maLop);
+//            tkb.setMon(mon);
+//            tkb.setPhongHoc(phongHoc);
 
-            Mon mon = new Mon();
-            mon.setMaMon(maMon);
-            mon.setTenMon(tenMon);
-
-            ThoiKhoaBieu tkb = new ThoiKhoaBieu();
-            tkb.setMaLop(maLop);
-            tkb.setMon(mon);
-            tkb.setPhongHoc(phongHoc);
+            ThoiKhoaBieu tkb = CSVUtils.parseThoiKhoaBieu(item);
 
             boolean res = ThoiKhoaBieuDAO.create(tkb);
             if (res) {
-                System.out.println("Them (" + maLop + ", " + maMon + ", " + tenMon + ", " + phongHoc + ") thanh cong!");
+                System.out.println("Them (" + tkb.getMaLop() + ", " + tkb.getMon().getMaMon() + ", " + tkb.getMon().getTenMon() + ", " + tkb.getPhongHoc() + ") thanh cong!");
             } else {
-                System.out.println("Them (" + maLop + ", " + maMon + ", " + tenMon + ", " + phongHoc + ") that bai!");
+                System.out.println("Them (" + tkb.getMaLop() + ", " + tkb.getMon().getMaMon() + ", " + tkb.getMon().getTenMon() + ", " + tkb.getPhongHoc() + ") that bai!");
             }
 
-            // Mặc định tất cả SV của lớp đều học các môn trong TKB
-            List<SinhVien> danhSachLop = SinhVienDAO.getListByMaLop(maLop);
-            for (SinhVien sv : danhSachLop) {
-                LopOfMon lopOfMon = new LopOfMon();
-                lopOfMon.setMaLop(maLop);
-                lopOfMon.setMon(mon);
-                lopOfMon.setSinhVien(sv);
-
-                res = LopOfMonDAO.create(lopOfMon);
-                if (res) {
-                    System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + maLop + "-" + mon.getMaMon() + ") thanh cong!");
-                } else {
-                    System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + maLop + "-" + mon.getMaMon() + ") that bai!");
-                }
-            }
+//            // Mặc định tất cả SV của lớp đều học các môn trong TKB
+//            List<SinhVien> danhSachLop = SinhVienDAO.getListByMaLop(tkb.getMaLop());
+//            for (SinhVien sv : danhSachLop) {
+//                LopOfMon lopOfMon = new LopOfMon();
+//                lopOfMon.setMaLop(tkb.getMaLop());
+//                lopOfMon.setMon(tkb.getMon());
+//                lopOfMon.setSinhVien(sv);
+//
+//                res = LopOfMonDAO.create(lopOfMon);
+//                if (res) {
+//                    System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + tkb.getMaLop() + "-" + tkb.getMon().getMaMon() + ") thanh cong!");
+//                } else {
+//                    System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + tkb.getMaLop() + "-" + tkb.getMon().getMaMon() + ") that bai!");
+//                }
+//            }
         }
     }
 

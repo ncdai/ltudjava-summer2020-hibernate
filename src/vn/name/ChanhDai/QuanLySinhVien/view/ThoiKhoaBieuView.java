@@ -1,11 +1,12 @@
 package vn.name.ChanhDai.QuanLySinhVien.view;
 
+import vn.name.ChanhDai.QuanLySinhVien.dao.LopOfMonDAO;
+import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.dao.ThoiKhoaBieuDAO;
+import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
+import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxItem;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxModel;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleTableModel;
-import vn.name.ChanhDai.QuanLySinhVien.utils.TableUtils;
+import vn.name.ChanhDai.QuanLySinhVien.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,9 +25,14 @@ public class ThoiKhoaBieuView {
     JFrame mainFrame;
     JTable tableThoiKhoaBieu;
     JComboBox<SimpleComboBoxItem> comboBoxMaLop;
+    FileChooserView fileChooserView;
+
+    JButton buttonImportCSV;
 
     public ThoiKhoaBieuView() {
         createAndShowUI();
+        createImportCSVUI();
+
         new GetThoiKhoaBieuThread(tableThoiKhoaBieu, "all").start();
         new GetComboBoxMaLopThread(comboBoxMaLop).start();
     }
@@ -73,8 +79,78 @@ public class ThoiKhoaBieuView {
             List<String> list = ThoiKhoaBieuDAO.getLopList();
             SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
             for (String item : list) {
-                model.addElement(new SimpleComboBoxItem(item, item));
+                boolean check = true;
+                for (int i = 0; i < model.getSize(); ++i) {
+                    if (model.getElementAt(i).getValue().equals(item)) {
+                        check = false;
+                        break;
+                    }
+                }
+
+                if (check) {
+                    model.addElement(new SimpleComboBoxItem(item, item));
+                }
             }
+        }
+    }
+
+    static class ImportCSVThread extends Thread {
+        JTable tableDraft;
+        JTable tableTarget;
+        JComboBox<SimpleComboBoxItem> comboBoxMaLop;
+
+        ImportCSVThread(JTable tableDraft, JTable tableTarget, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
+            this.tableDraft = tableDraft;
+            this.tableTarget = tableTarget;
+            this.comboBoxMaLop = comboBoxMaLop;
+        }
+
+        @Override
+        public void run() {
+            SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
+            SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
+
+            int desiredImportQuantity = tableDraftModel.getRowCount();
+            int actualImportQuantity = 0;
+
+            for (int i = 0; i < desiredImportQuantity; ++i) {
+                ThoiKhoaBieu thoiKhoaBieu = TableUtils.parseThoiKhoaBieu(tableDraftModel.getRow(i));
+
+                boolean success = ThoiKhoaBieuDAO.create(thoiKhoaBieu);
+
+                if (success) {
+                    // Mặc định tất cả SV của lớp đều học các môn trong TKB
+                    List<SinhVien> danhSachLop = SinhVienDAO.getListByMaLop(thoiKhoaBieu.getMaLop());
+                    for (SinhVien sv : danhSachLop) {
+                        LopOfMon lopOfMon = new LopOfMon();
+                        lopOfMon.setMaLop(thoiKhoaBieu.getMaLop());
+                        lopOfMon.setMon(thoiKhoaBieu.getMon());
+                        lopOfMon.setSinhVien(sv);
+
+                        success = LopOfMonDAO.create(lopOfMon);
+                        if (success) {
+                            System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + thoiKhoaBieu.getMaLop() + "-" + thoiKhoaBieu.getMon().getMaMon() + ") thanh cong!");
+                        } else {
+                            System.out.println("Them SinhVien(" + sv.getMaSinhVien() + ") vao Lop(" + thoiKhoaBieu.getMaLop() + "-" + thoiKhoaBieu.getMon().getMaMon() + ") that bai!");
+                        }
+                    }
+
+                    tableDraftModel.setValueAt( i, 4, "[SUCCESS]");
+                    tableTargetModel.addRow(TableUtils.toRow(thoiKhoaBieu));
+                    ++actualImportQuantity;
+
+                } else {
+                    tableDraftModel.setValueAt( i, 4, "[FAILED]");
+                }
+
+                tableDraftModel.fireTableDataChanged();
+                tableTargetModel.fireTableDataChanged();
+            }
+
+            JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+
+            // Cap nhat lai du lieu comboBoxMaLop
+            new GetComboBoxMaLopThread(comboBoxMaLop).start();
         }
     }
 
@@ -102,15 +178,18 @@ public class ThoiKhoaBieuView {
             }
         });
 
-        JPanel panelCenter = new JPanel(new BorderLayout());
+        JPanel panelCenter = new JPanel(new BorderLayout(8, 8));
         JPanel panelCenterHeader = new JPanel();
 
         panelCenterHeader.setLayout(new BoxLayout(panelCenterHeader, BoxLayout.X_AXIS));
         panelCenterHeader.setBackground(Color.WHITE);
         panelCenterHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        panelCenterHeader.add(new JLabel("Xem theo lớp"));
+        panelCenterHeader.add(Box.createRigidArea(new Dimension(8, 0)));
         panelCenterHeader.add(comboBoxMaLop);
         panelCenterHeader.add(Box.createHorizontalGlue());
-        panelCenterHeader.add(new JButton("Nhập File CSV"));
+        buttonImportCSV = new JButton("Nhập File CSV");
+        panelCenterHeader.add(buttonImportCSV);
 
         Vector<String> columnNames = new Vector<>();
         columnNames.add("#");
@@ -133,6 +212,7 @@ public class ThoiKhoaBieuView {
 //        });
 
         JScrollPane scrollPaneCenter = new JScrollPane(tableThoiKhoaBieu);
+        scrollPaneCenter.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
 
         panelCenter.add(panelCenterHeader, BorderLayout.PAGE_START);
         panelCenter.add(scrollPaneCenter, BorderLayout.CENTER);
@@ -142,6 +222,44 @@ public class ThoiKhoaBieuView {
 
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
-        mainFrame.setVisible(true);
+    }
+
+    private void createImportCSVUI() {
+        fileChooserView = new FileChooserView(buttonImportCSV) {
+            @Override
+            public Vector<String> getColumnNames() {
+                Vector<String> columnNames = new Vector<>();
+                columnNames.add("Mã lớp");
+                columnNames.add("Mã môn");
+                columnNames.add("Tên môn");
+                columnNames.add("Phòng học");
+                columnNames.add("Trạng thái");
+
+                return columnNames;
+            }
+
+            @Override
+            public Vector<String> parseTableRow(String[] str) {
+                ThoiKhoaBieu thoiKhoaBieu = CSVUtils.parseThoiKhoaBieu(str);
+                if (thoiKhoaBieu != null) {
+                    Vector<String> row = TableUtils.toRow(thoiKhoaBieu);
+                    row.remove(0); // remove idCol
+                    row.add("[PENDING]");
+                    return row;
+                }
+
+                return null;
+            }
+
+            @Override
+            public void startImport(JTable tablePreview) {
+                System.out.println("Start Import");
+                new ImportCSVThread(tablePreview, tableThoiKhoaBieu, comboBoxMaLop).start();
+            }
+        };
+    }
+
+    public void setVisible(boolean visible) {
+        mainFrame.setVisible(visible);
     }
 }

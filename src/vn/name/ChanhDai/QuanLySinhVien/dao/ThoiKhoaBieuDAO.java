@@ -48,6 +48,7 @@ public class ThoiKhoaBieuDAO {
     public static boolean create(ThoiKhoaBieu tkb) {
         if (getByMaMonAndMaLop(tkb.getMon().getMaMon(), tkb.getMaLop()) != null) {
             // Da ton tai
+            System.out.println(tkb.getMaLop() + "-" + tkb.getMon().getMaMon() + "-" + tkb.getMon().getTenMon() + " da ton tai!");
             return false;
         }
 

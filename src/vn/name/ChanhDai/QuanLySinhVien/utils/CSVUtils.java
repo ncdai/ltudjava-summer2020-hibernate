@@ -1,6 +1,8 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
+import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -57,5 +59,20 @@ public class CSVUtils {
         sv.setMatKhau(maSinhVien);
 
         return sv;
+    }
+
+    public static ThoiKhoaBieu parseThoiKhoaBieu(String[] item) {
+        if (item.length < 4) return null;
+
+        Mon mon = new Mon();
+        mon.setMaMon(item[1]);
+        mon.setTenMon(item[2]);
+
+        ThoiKhoaBieu tkb = new ThoiKhoaBieu();
+        tkb.setMaLop( item[0]);
+        tkb.setMon(mon);
+        tkb.setPhongHoc(item[3]);
+
+        return tkb;
     }
 }

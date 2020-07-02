@@ -11,7 +11,13 @@ import java.awt.*;
  * @description
  */
 public class HomeView {
+    SinhVienView sinhVienView;
+    ThoiKhoaBieuView thoiKhoaBieuView;
+
     public HomeView() {
+        sinhVienView = new SinhVienView();
+        thoiKhoaBieuView = new ThoiKhoaBieuView();
+
         createAndShowUI();
     }
 
@@ -25,9 +31,15 @@ public class HomeView {
 
         JButton sinhVienListButton = new JButton("Danh sách sinh viên");
         sinhVienListButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sinhVienListButton.addActionListener(e -> {
+            sinhVienView.setVisible(true);
+        });
 
         JButton thoiKhoaBieuButton = new JButton("Thời khóa biểu");
         thoiKhoaBieuButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        thoiKhoaBieuButton.addActionListener(e -> {
+            thoiKhoaBieuView.setVisible(true);
+        });
 
         JButton lopOfMonButton = new JButton("Danh sách lớp");
         lopOfMonButton.setAlignmentX(Component.CENTER_ALIGNMENT);

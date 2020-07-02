@@ -12,14 +12,14 @@ import java.util.Vector;
 
 public class SinhVienView {
     JFrame mainFrame;
-    JFrame importCSVFrame;
 
     JTable tableSinhVien;
-    JTable tablePreview;
 
     JComboBox<SimpleComboBoxItem> comboBoxMaLop;
 
-    JFileChooser fileChooser = new JFileChooser();
+    JButton importCSVButton;
+
+    FileChooserView fileChooserView;
 
     JTextField textFieldMaSinhVien;
     JTextField textFieldHoTen;
@@ -221,83 +221,38 @@ public class SinhVienView {
     }
 
     public void createImportCSVUI() {
-        importCSVFrame = new JFrame();
-        importCSVFrame.setTitle("Nhập File CSV");
+        fileChooserView = new FileChooserView(importCSVButton) {
+            @Override
+            public Vector<String> getColumnNames() {
+                Vector<String> columnNames = new Vector<>();
+                columnNames.add("MSSV");
+                columnNames.add("Họ tên");
+                columnNames.add("Giới tính");
+                columnNames.add("CMND");
+                columnNames.add("Lớp");
+                columnNames.add("Trạng thái");
+                return columnNames;
+            }
 
-        BorderLayout borderLayout = new BorderLayout(0, 8);
-        importCSVFrame.setLayout(borderLayout);
+            @Override
+            public Vector<String> parseTableRow(String[] str) {
+                SinhVien sinhVien = CSVUtils.parseSinhVien(str);
 
-        JPanel panelHeader = new JPanel();
-        panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.X_AXIS));
-        panelHeader.setBackground(Color.WHITE);
-        panelHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
-
-        JButton buttonChooseAnotherFile = new JButton("Chọn File khác");
-        JButton buttonImport = new JButton("Bắt đầu nhập");
-
-        panelHeader.add(new JLabel("Xem trước"));
-        panelHeader.add(Box.createHorizontalGlue());
-        panelHeader.add(buttonChooseAnotherFile);
-        panelHeader.add(Box.createRigidArea(new Dimension(8,0)));
-        panelHeader.add(buttonImport);
-
-        tablePreview = new JTable();
-
-        Vector<String> columnNames = new Vector<>();
-        columnNames.add("MSSV");
-        columnNames.add("Họ tên");
-        columnNames.add("Giới tính");
-        columnNames.add("CMND");
-        columnNames.add("Lớp");
-        columnNames.add("Trạng thái");
-
-        tablePreview.setModel(new SimpleTableModel(columnNames, null));
-        tablePreview.setFillsViewportHeight(true);
-
-        JScrollPane scrollPane = new JScrollPane(tablePreview);
-        scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
-
-        Container contentPance = importCSVFrame.getContentPane();
-        contentPance.add(panelHeader, BorderLayout.PAGE_START);
-        contentPance.add(scrollPane, BorderLayout.CENTER);
-
-        buttonChooseAnotherFile.addActionListener(e -> {
-            handleImportCSVClick();
-        });
-
-        buttonImport.addActionListener(e -> {
-            new ImportCSVThread(tablePreview, tableSinhVien).start();
-        });
-
-        importCSVFrame.pack();
-        importCSVFrame.setLocationRelativeTo(null);
-    }
-
-    void handleImportCSVClick() {
-        int returnVal = fileChooser.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            System.out.println("File : " + file.getAbsolutePath());
-
-            SimpleTableModel tablePreviewModel = (SimpleTableModel) tablePreview.getModel();
-            tablePreviewModel.clearRows();
-
-            String fileName = file.getAbsolutePath();
-            List<String[]> list = CSVUtils.reader(fileName);
-            for (String[] item : list) {
-                SinhVien sinhVien = CSVUtils.parseSinhVien(item);
                 if (sinhVien != null) {
                     Vector<String> row = TableUtils.toRow(sinhVien);
                     row.add("[PENDING]");
-                    tablePreviewModel.addRow(row);
+                    return row;
                 }
+
+                return null;
             }
 
-            tablePreviewModel.fireTableDataChanged();
-            importCSVFrame.setVisible(true);
-        } else {
-            System.out.println("File : Cancel");
-        }
+            @Override
+            public void startImport(JTable tablePreview) {
+                new ImportCSVThread(tablePreview, tableSinhVien).start();
+                System.out.println("Start Import");
+            }
+        };
     }
 
     public void createAndShowUI() {
@@ -329,11 +284,11 @@ public class SinhVienView {
             }
         });
 
-        JButton importCSVButton = new JButton("Nhập File CSV");
+        importCSVButton = new JButton("Nhập File CSV");
         importCSVButton.setPreferredSize(new Dimension(120, 24));
-        importCSVButton.addActionListener(e -> {
-            handleImportCSVClick();
-        });
+//        importCSVButton.addActionListener(e -> {
+//            handleImportCSVClick();
+//        });
 
         JPanel topMenuPanel = new JPanel();
         topMenuPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
@@ -569,6 +524,9 @@ public class SinhVienView {
 
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
-        mainFrame.setVisible(true);
+    }
+
+    public void setVisible(boolean visible) {
+        mainFrame.setVisible(visible);
     }
 }

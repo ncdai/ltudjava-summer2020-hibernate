@@ -1,5 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
@@ -22,6 +23,20 @@ public class TableUtils {
         sinhVien.setMaLop(row.get(4));
 
         return sinhVien;
+    }
+
+    // boolean idGenerator
+    public static ThoiKhoaBieu parseThoiKhoaBieu(Vector<String> row) {
+        Mon mon = new Mon();
+        mon.setMaMon(row.get(1));
+        mon.setTenMon(row.get(2));
+
+        ThoiKhoaBieu tkb = new ThoiKhoaBieu();
+        tkb.setMaLop(row.get(0));
+        tkb.setMon(mon);
+        tkb.setPhongHoc(row.get(3));
+
+        return tkb;
     }
 
     public static Vector<String> toRow(SinhVien sinhVien) {

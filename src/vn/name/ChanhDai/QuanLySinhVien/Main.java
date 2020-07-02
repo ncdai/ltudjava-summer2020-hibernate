@@ -1,5 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien;
 
+import vn.name.ChanhDai.QuanLySinhVien.view.HomeView;
 import vn.name.ChanhDai.QuanLySinhVien.view.SinhVienView;
 import vn.name.ChanhDai.QuanLySinhVien.view.ThoiKhoaBieuView;
 
@@ -16,12 +17,10 @@ public class Main {
             // handle exception
         }
 
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // new SinhVienView();
-                new ThoiKhoaBieuView();
-            }
+        EventQueue.invokeLater(() -> {
+//                new HomeView();
+//            new SinhVienView();
+            new ThoiKhoaBieuView().setVisible(true);
         });
     }
 }
