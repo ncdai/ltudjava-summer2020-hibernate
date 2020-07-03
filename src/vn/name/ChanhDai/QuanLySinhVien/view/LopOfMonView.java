@@ -559,14 +559,28 @@ public class LopOfMonView {
             }
         });
 
+        JButton buttonXemThongKe = new JButton("Xem Thống Kê");
+        buttonXemThongKe.addActionListener(e -> {
+            String maLop = getComboBoxValue(comboBoxMaLopFilter);
+            String maMon = getComboBoxValue(comboBoxMaMonFilter);
+
+            if (!maLop.equals("all") && !maMon.equals("all")) {
+                new LopOfMonThongKeView(maLop, maMon);
+            } else {
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
         panelFilter.add(comboBoxMaLopFilter);
         panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
         panelFilter.add(comboBoxMaMonFilter);
         panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
         panelFilter.add(buttonGet);
+        panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
+        panelFilter.add(buttonXemThongKe);
         panelFilter.add(Box.createHorizontalGlue());
 
-        buttonImportCSV = new JButton("Nhập Bảng điểm CSV");
+        buttonImportCSV = new JButton("Nhập Bảng Điểm CSV");
         panelFilter.add(buttonImportCSV);
 
         return panelFilter;
@@ -576,11 +590,11 @@ public class LopOfMonView {
         Vector<String> columnNames = new Vector<>();
         columnNames.add("Mã Lớp");
         columnNames.add("Mã Môn");
-        columnNames.add("Tên môn");
+        columnNames.add("Tên Môn");
 
         columnNames.add("MSSV");
         columnNames.add("Họ và Tên");
-        columnNames.add("Giới tính");
+        columnNames.add("Giới Tính");
 
         columnNames.add("Điểm GK");
         columnNames.add("Điểm CK");
@@ -693,7 +707,7 @@ public class LopOfMonView {
         spinnerDiemTong = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
         form.add(spinnerDiemTong, createFormConstraints(1, 8, 2));
 
-        buttonSubmit = new JButton("Thực hiện");
+        buttonSubmit = new JButton("Thực Hiện");
         form.add(buttonSubmit, createFormConstraints(0, 9, 3, 8, 0, 0, 0));
 
         buttonSubmit.addActionListener(e -> {
@@ -726,9 +740,12 @@ public class LopOfMonView {
             int rowSelectedIndex = tableLopOfMon.getSelectedRow();
 
             if (radioButtonUpdate.isSelected()) {
+
                 System.out.println("Update");
                 new UpdateThread(tableLopOfMon, lopOfMon, rowSelectedIndex).start();
+
             } else if (radioButtonDelete.isSelected()) {
+
                 System.out.println("Delete");
 
                 int confirm = JOptionPane.showConfirmDialog(
@@ -741,9 +758,12 @@ public class LopOfMonView {
                 if (confirm == JOptionPane.YES_OPTION) {
                     new DeleteThread(tableLopOfMon, lopOfMon, rowSelectedIndex).start();
                 }
+
             } else {
+
                 System.out.println("Create");
                 new CreateThread(tableLopOfMon, lopOfMon).start();
+
             }
         });
 

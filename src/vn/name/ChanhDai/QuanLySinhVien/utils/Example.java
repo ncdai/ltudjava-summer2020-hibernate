@@ -10,6 +10,7 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
 import java.util.List;
+import java.util.Map;
 
 public class Example {
     public static void CSVReaderExample() {
@@ -385,9 +386,9 @@ public class Example {
 //            System.out.println(item);
 //        }
 
-        List<Mon> list = ThoiKhoaBieuDAO.getMonList();
-        for (Mon item : list) {
-            System.out.println(item.getMaMon() + " - " + item.getTenMon());
-        }
+//        List<Mon> list = ThoiKhoaBieuDAO.getMonList();
+//        for (Mon item : list) {
+//            System.out.println(item.getMaMon() + " - " + item.getTenMon());
+//        }
     }
 }

@@ -1,5 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.dao;
 
+import org.hibernate.hql.internal.ast.tree.IdentNode;
 import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
@@ -7,6 +8,7 @@ import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * vn.edu.hcmus.fit.sv18120113.QuanLySinhVien
@@ -116,5 +118,32 @@ public class LopOfMonDAO {
         }
 
         return false;
+    }
+
+    public static Map<String, Integer> getThongKe(String maLop, String maMon) {
+        // language=HQL
+        String hql = "select count(*) as soLuongSV, sum(case when lom.diemTong >= 5 then 1 else 0 end) as soLuongSVQuaMon from LopOfMon lom where lom.maLop = :maLop and lom.mon.maMon = :maMon";
+
+        Map<String, String> params = new HashMap<>();
+        params.put("maLop", maLop);
+        params.put("maMon", maMon);
+
+        Object[] data = HibernateUtils.querySingle(Object[].class, hql, params);
+
+        Map<String, Integer> res = new HashMap<>();
+
+        if (data != null) {
+            int soLuongSV = Integer.parseInt(data[0].toString());
+            int soLuongSVQuaMon = Integer.parseInt(data[1].toString());
+            int soLuongSVRotMon = soLuongSV - soLuongSVQuaMon;
+
+            res.put("soLuongSV", soLuongSV);
+            res.put("soLuongSVQuaMon", soLuongSVQuaMon);
+            res.put("soLuongSVRotMon", soLuongSVRotMon);
+
+            return res;
+        }
+
+        return null;
     }
 }
