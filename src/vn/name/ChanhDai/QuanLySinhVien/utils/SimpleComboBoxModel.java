@@ -19,4 +19,13 @@ public class SimpleComboBoxModel extends DefaultComboBoxModel<SimpleComboBoxItem
     public SimpleComboBoxItem getSelectedItem() {
         return (SimpleComboBoxItem) super.getSelectedItem();
     }
+
+    public void setSelectedItem(String value) {
+        for (int index = 0; index < this.getSize(); ++index) {
+            if (this.getElementAt(index).getValue().equals(value)) {
+                this.setSelectedItem(this.getElementAt(index));
+                break;
+            }
+        }
+    }
 }

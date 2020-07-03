@@ -1,5 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
@@ -74,5 +75,32 @@ public class CSVUtils {
         tkb.setPhongHoc(item[3]);
 
         return tkb;
+    }
+
+    public static LopOfMon parseLopOfMon(String[] item) {
+        if (item.length < 8) return null;
+
+        String maLop = item[0];
+        String maMon = item[1];
+        String maSinhVien = item[2];
+        String hoTen = item[3];
+        Double diemGK = Double.parseDouble(item[4]);
+        Double diemCK = Double.parseDouble(item[5]);
+        Double diemKhac = Double.parseDouble(item[6]);
+        Double diemTong = Double.parseDouble(item[7]);
+
+        LopOfMon lopOfMon = new LopOfMon(
+            maLop,
+            maMon,
+            maSinhVien,
+            diemGK,
+            diemCK,
+            diemKhac,
+            diemTong
+        );
+
+        lopOfMon.getSinhVien().setHoTen(hoTen);
+
+        return lopOfMon;
     }
 }

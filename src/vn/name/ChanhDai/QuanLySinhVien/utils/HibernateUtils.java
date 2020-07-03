@@ -72,6 +72,7 @@ public class HibernateUtils {
             transaction = session.beginTransaction();
             session.save(row);
             transaction.commit();
+            session.refresh(row);
 
             session.close();
             return true;
@@ -106,6 +107,7 @@ public class HibernateUtils {
             transaction = session.beginTransaction();
             session.update(row);
             transaction.commit();
+            session.refresh(row);
 
             session.close();
             return true;

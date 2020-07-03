@@ -26,4 +26,12 @@ public class Mon {
     public void setTenMon(String tenMon) {
         this.tenMon = tenMon;
     }
+
+    @Override
+    public String toString() {
+        return "Mon{" +
+            "maMon='" + maMon + '\'' +
+            ", tenMon='" + tenMon + '\'' +
+            '}';
+    }
 }

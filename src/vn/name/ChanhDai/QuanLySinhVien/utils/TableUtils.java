@@ -26,18 +26,55 @@ public class TableUtils {
         return sinhVien;
     }
 
-    // boolean idGenerator
     public static ThoiKhoaBieu parseThoiKhoaBieu(Vector<String> row) {
+        // maLop, maMon, tenMon, phongHoc
+
         Mon mon = new Mon();
-        mon.setMaMon(row.get(1));
-        mon.setTenMon(row.get(2));
+        mon.setMaMon(row.get(0));
+        mon.setTenMon(row.get(1));
 
         ThoiKhoaBieu tkb = new ThoiKhoaBieu();
-        tkb.setMaLop(row.get(0));
+        tkb.setMaLop(row.get(2));
         tkb.setMon(mon);
         tkb.setPhongHoc(row.get(3));
 
         return tkb;
+    }
+
+    public static Double parseDouble(String string) {
+        return !string.equals("") ? Double.parseDouble(string) : null;
+    }
+
+    public static String toString(Double number) {
+        return number != null ? number.toString() : "";
+    }
+
+    public static LopOfMon parseLopOfMon(Vector<String> row) {
+        // maLop, maMon, tenMon, maSinhVien, hoTen, gioiTinh
+
+        String maLop = row.get(0);
+        String maMon = row.get(1);
+        String maSinhVien = row.get(3);
+        String hoTen = row.get(4);
+
+        Double diemGK = parseDouble(row.get(6));
+        Double diemCK = parseDouble(row.get(7));
+        Double diemKhac = parseDouble(row.get(8));
+        Double diemTong = parseDouble(row.get(9));
+
+        LopOfMon lopOfMon = new LopOfMon(
+            maLop,
+            maMon,
+            maSinhVien,
+            diemGK,
+            diemCK,
+            diemKhac,
+            diemTong
+        );
+
+        lopOfMon.getSinhVien().setHoTen(hoTen);
+
+        return lopOfMon;
     }
 
     public static Vector<String> toRow(SinhVien sinhVien) {
@@ -52,7 +89,6 @@ public class TableUtils {
 
     public static Vector<String> toRow(ThoiKhoaBieu thoiKhoaBieu) {
         Vector<String> newRow = new Vector<>();
-        newRow.add(thoiKhoaBieu.getId() + "");
         newRow.add(thoiKhoaBieu.getMaLop());
         newRow.add(thoiKhoaBieu.getMon().getMaMon());
         newRow.add(thoiKhoaBieu.getMon().getTenMon());
@@ -64,19 +100,17 @@ public class TableUtils {
     public static Vector<String> toRow(LopOfMon lopOfMon) {
         Vector<String> row = new Vector<>();
 
-//        columnNames.add("Mã Lớp");
-//        columnNames.add("Mã Môn");
-//        columnNames.add("Tên môn");
-//        columnNames.add("MSSV");
-//        columnNames.add("Họ và Tên");
-//        columnNames.add("Giới tính");
-
         row.add(lopOfMon.getMaLop());
         row.add(lopOfMon.getMon().getMaMon());
         row.add(lopOfMon.getMon().getTenMon());
         row.add(lopOfMon.getSinhVien().getMaSinhVien());
         row.add(lopOfMon.getSinhVien().getHoTen());
         row.add(lopOfMon.getSinhVien().getGioiTinh());
+        row.add(lopOfMon.getDiemGK() != null ? lopOfMon.getDiemGK().toString() : "");
+        row.add(lopOfMon.getDiemCK() != null ? lopOfMon.getDiemCK().toString() : "");
+        row.add(lopOfMon.getDiemKhac() != null ? lopOfMon.getDiemKhac().toString() : "");
+        row.add(lopOfMon.getDiemTong() != null ? lopOfMon.getDiemTong().toString() : "");
+        row.add(lopOfMon.getDiemTong() != null ? (lopOfMon.getDiemTong() >= 5 ? "Đậu" : "Rớt") : "");
 
         return row;
     }

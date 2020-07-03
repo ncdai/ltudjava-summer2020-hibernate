@@ -174,60 +174,60 @@ public class Example {
     }
 
     public static void importBangDiemExample() {
-        List<String[]> bangDiem = CSVUtils.reader("bangDiem.csv");
-        for (String[] item : bangDiem) {
-            String maLop = item[0];
-            String maMon = item[1];
-            String maSinhVien = item[2];
-            String hoTen = item[3];
-            Double diemGK = Double.parseDouble(item[4]);
-            Double diemCK = Double.parseDouble(item[5]);
-            Double diemKhac = Double.parseDouble(item[6]);
-            Double diemTong = Double.parseDouble(item[7]);
-
-            LopOfMon lopOfMon = LopOfMonDAO.getSingleByMaSinhVienAndMaMon(maSinhVien, maMon);
-
-            if (lopOfMon != null) {
-                lopOfMon.setDiemGK(diemGK);
-                lopOfMon.setDiemCK(diemCK);
-                lopOfMon.setDiemKhac(diemKhac);
-                lopOfMon.setDiemTong(diemTong);
-
-                boolean success = LopOfMonDAO.update(lopOfMon);
-                if (success) {
-                    System.out.println(lopOfMon.getMaLop());
-                    System.out.println(lopOfMon.getMon().getMaMon());
-                    System.out.println(lopOfMon.getSinhVien().getMaSinhVien());
-                    System.out.println(lopOfMon.getSinhVien().getHoTen());
-                    System.out.println(lopOfMon.getDiemGK());
-                    System.out.println(lopOfMon.getDiemCK());
-                    System.out.println(lopOfMon.getDiemKhac());
-                    System.out.println(lopOfMon.getDiemTong());
-                    if (lopOfMon.getDiemTong() > 5.0) {
-                        System.out.println("Dau!");
-                    } else {
-                        System.out.println("Rot!");
-                    }
-
-                    System.out.println("Them thanh cong!");
-                    System.out.println("---");
-                } else {
-                    System.out.println(maLop);
-                    System.out.println(maMon);
-                    System.out.println(maSinhVien);
-                    System.out.println(hoTen);
-                    System.out.println("Them that bai!");
-                    System.out.println("---");
-                }
-            } else {
-                System.out.println(maLop);
-                System.out.println(maMon);
-                System.out.println(maSinhVien);
-                System.out.println(hoTen);
-                System.out.println("Them that bai!");
-                System.out.println("---");
-            }
-        }
+//        List<String[]> bangDiem = CSVUtils.reader("data/bangDiem.csv");
+//        for (String[] item : bangDiem) {
+//            String maLop = item[0];
+//            String maMon = item[1];
+//            String maSinhVien = item[2];
+//            String hoTen = item[3];
+//            Double diemGK = Double.parseDouble(item[4]);
+//            Double diemCK = Double.parseDouble(item[5]);
+//            Double diemKhac = Double.parseDouble(item[6]);
+//            Double diemTong = Double.parseDouble(item[7]);
+//
+//            LopOfMon lopOfMon = LopOfMonDAO.getSingleByMaSinhVienAndMaMon(maSinhVien, maMon);
+//
+//            if (lopOfMon != null) {
+//                lopOfMon.setDiemGK(diemGK);
+//                lopOfMon.setDiemCK(diemCK);
+//                lopOfMon.setDiemKhac(diemKhac);
+//                lopOfMon.setDiemTong(diemTong);
+//
+//                boolean success = LopOfMonDAO.update(lopOfMon);
+//                if (success) {
+//                    System.out.println(lopOfMon.getMaLop());
+//                    System.out.println(lopOfMon.getMon().getMaMon());
+//                    System.out.println(lopOfMon.getSinhVien().getMaSinhVien());
+//                    System.out.println(lopOfMon.getSinhVien().getHoTen());
+//                    System.out.println(lopOfMon.getDiemGK());
+//                    System.out.println(lopOfMon.getDiemCK());
+//                    System.out.println(lopOfMon.getDiemKhac());
+//                    System.out.println(lopOfMon.getDiemTong());
+//                    if (lopOfMon.getDiemTong() > 5.0) {
+//                        System.out.println("Dau!");
+//                    } else {
+//                        System.out.println("Rot!");
+//                    }
+//
+//                    System.out.println("Them thanh cong!");
+//                    System.out.println("---");
+//                } else {
+//                    System.out.println(maLop);
+//                    System.out.println(maMon);
+//                    System.out.println(maSinhVien);
+//                    System.out.println(hoTen);
+//                    System.out.println("Them that bai!");
+//                    System.out.println("---");
+//                }
+//            } else {
+//                System.out.println(maLop);
+//                System.out.println(maMon);
+//                System.out.println(maSinhVien);
+//                System.out.println(hoTen);
+//                System.out.println("Them that bai!");
+//                System.out.println("---");
+//            }
+//        }
     }
 
     public static void updateLopOfMonExample() {
@@ -380,9 +380,14 @@ public class Example {
 //        deleteSinhVienExample();
 //        getMonListExample();
 
-        List<String> list = SinhVienDAO.getLopList();
-        for (String item : list) {
-            System.out.println(item);
+//        List<String> list = SinhVienDAO.getLopList();
+//        for (String item : list) {
+//            System.out.println(item);
+//        }
+
+        List<Mon> list = ThoiKhoaBieuDAO.getMonList();
+        for (Mon item : list) {
+            System.out.println(item.getMaMon() + " - " + item.getTenMon());
         }
     }
 }

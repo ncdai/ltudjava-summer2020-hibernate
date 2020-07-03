@@ -1,7 +1,9 @@
 package vn.name.ChanhDai.QuanLySinhVien.dao;
 
+import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
+import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxItem;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,5 +63,22 @@ public class ThoiKhoaBieuDAO {
         Map<String, String> params = new HashMap<>();
 
         return HibernateUtils.queryList(String.class, hql, params);
+    }
+
+    public static List<Mon> getMonList() {
+        // language=HQL
+        String hql = "select distinct tkb.mon from ThoiKhoaBieu tkb";
+        Map<String, String> params = new HashMap<>();
+
+        return HibernateUtils.queryList(Mon.class, hql, params);
+    }
+
+    public static List<Mon> getMonListByMaLop(String maLop) {
+        // language=HQL
+        String hql = "select distinct tkb.mon from ThoiKhoaBieu tkb where tkb.maLop = :maLop";
+        Map<String, String> params = new HashMap<>();
+        params.put("maLop", maLop);
+
+        return HibernateUtils.queryList(Mon.class, hql, params);
     }
 }

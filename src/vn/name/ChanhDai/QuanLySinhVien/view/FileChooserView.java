@@ -24,9 +24,7 @@ public abstract class FileChooserView {
     private JTable tablePreview;
 
     public FileChooserView(JButton buttonTarget) {
-        buttonTarget.addActionListener(e -> {
-            chooseFile();
-        });
+        buttonTarget.addActionListener(e -> chooseFile());
 
         createUI();
     }
@@ -97,13 +95,9 @@ public abstract class FileChooserView {
         contentPance.add(panelHeader, BorderLayout.PAGE_START);
         contentPance.add(scrollPane, BorderLayout.CENTER);
 
-        buttonChooseAnotherFile.addActionListener(e -> {
-            chooseFile();
-        });
+        buttonChooseAnotherFile.addActionListener(e -> chooseFile());
 
-        buttonImport.addActionListener(e -> {
-            startImport(tablePreview);
-        });
+        buttonImport.addActionListener(e -> startImport(tablePreview));
 
         importCSVFrame.pack();
         importCSVFrame.setLocationRelativeTo(null);

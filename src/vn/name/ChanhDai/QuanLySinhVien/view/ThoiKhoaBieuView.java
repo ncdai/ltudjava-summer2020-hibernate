@@ -192,7 +192,6 @@ public class ThoiKhoaBieuView {
         panelCenterHeader.add(buttonImportCSV);
 
         Vector<String> columnNames = new Vector<>();
-        columnNames.add("#");
         columnNames.add("Mã lớp");
         columnNames.add("Mã môn");
         columnNames.add("Tên môn");
@@ -200,16 +199,6 @@ public class ThoiKhoaBieuView {
 
         tableThoiKhoaBieu = new JTable(new SimpleTableModel(columnNames, null));
         tableThoiKhoaBieu.setFillsViewportHeight(true);
-        tableThoiKhoaBieu.getColumnModel().getColumn(0).setMinWidth(0);
-        tableThoiKhoaBieu.getColumnModel().getColumn(0).setMaxWidth(0);
-        tableThoiKhoaBieu.getColumnModel().getColumn(0).setWidth(0);
-
-//        ListSelectionModel listSelectionModel = tableThoiKhoaBieu.getSelectionModel();
-//        listSelectionModel.addListSelectionListener(e -> {
-//            int rowIndex = tableThoiKhoaBieu.getSelectedRow();
-//            SimpleTableModel tableModel = (SimpleTableModel)tableThoiKhoaBieu.getModel();
-//            System.out.println(tableModel.getRow(rowIndex).toString());
-//        });
 
         JScrollPane scrollPaneCenter = new JScrollPane(tableThoiKhoaBieu);
         scrollPaneCenter.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
@@ -243,7 +232,6 @@ public class ThoiKhoaBieuView {
                 ThoiKhoaBieu thoiKhoaBieu = CSVUtils.parseThoiKhoaBieu(str);
                 if (thoiKhoaBieu != null) {
                     Vector<String> row = TableUtils.toRow(thoiKhoaBieu);
-                    row.remove(0); // remove idCol
                     row.add("[PENDING]");
                     return row;
                 }

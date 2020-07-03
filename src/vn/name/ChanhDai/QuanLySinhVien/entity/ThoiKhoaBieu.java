@@ -13,6 +13,16 @@ public class ThoiKhoaBieu {
     private String maLop;
     private Mon mon;
 
+//    public ThoiKhoaBieu() {}
+//
+//    public ThoiKhoaBieu(String maMon, String tenMon) {
+//        Mon mon = new Mon();
+//        mon.setMaMon(maMon);
+//        mon.setTenMon(tenMon);
+//
+//        this.setMon(mon);
+//    }
+
     public int getId() {
         return id;
     }

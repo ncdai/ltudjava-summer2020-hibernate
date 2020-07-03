@@ -8,8 +8,8 @@ package vn.name.ChanhDai.QuanLySinhVien.utils;
  * @description
  */
 public class SimpleComboBoxItem {
-    private String value;
-    private String label;
+    private final String value;
+    private final String label;
 
     public SimpleComboBoxItem(String value, String label) {
         this.value = value;
@@ -20,17 +20,17 @@ public class SimpleComboBoxItem {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+//    public void setValue(String value) {
+//        this.value = value;
+//    }
 
     public String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+//    public void setLabel(String label) {
+//        this.label = label;
+//    }
 
     @Override
     public String toString() {

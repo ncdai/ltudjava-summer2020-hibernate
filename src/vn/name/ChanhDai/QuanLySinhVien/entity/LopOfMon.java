@@ -17,6 +17,25 @@ public class LopOfMon {
     private SinhVien sinhVien;
     private Mon mon;
 
+    public LopOfMon() {}
+
+    public LopOfMon(String maLop, String maMon, String maSinhVien, Double diemGK, Double diemCK, Double diemKhac, Double diemTong) {
+        this.setMaLop(maLop);
+
+        Mon mon = new Mon();
+        mon.setMaMon(maMon);
+        this.setMon(mon);
+
+        SinhVien sinhVien = new SinhVien();
+        sinhVien.setMaSinhVien(maSinhVien);
+        this.setSinhVien(sinhVien);
+
+        this.setDiemGK(diemGK);
+        this.setDiemCK(diemCK);
+        this.setDiemKhac(diemKhac);
+        this.setDiemTong(diemTong);
+    }
+
     public int getId() {
         return id;
     }
@@ -79,5 +98,19 @@ public class LopOfMon {
 
     public void setMon(Mon mon) {
         this.mon = mon;
+    }
+
+    @Override
+    public String toString() {
+        return "LopOfMon{" +
+            "id=" + id +
+            ", maLop='" + maLop + '\'' +
+            ", diemGK=" + diemGK +
+            ", diemCK=" + diemCK +
+            ", diemKhac=" + diemKhac +
+            ", diemTong=" + diemTong +
+            ", sinhVien=" + sinhVien +
+            ", mon=" + mon +
+            '}';
     }
 }

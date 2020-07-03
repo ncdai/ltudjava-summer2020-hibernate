@@ -6,7 +6,6 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.List;
 import java.util.Vector;
 

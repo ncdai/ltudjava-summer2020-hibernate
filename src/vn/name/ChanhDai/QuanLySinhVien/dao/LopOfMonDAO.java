@@ -1,6 +1,7 @@
 package vn.name.ChanhDai.QuanLySinhVien.dao;
 
 import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
+import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
 import java.util.HashMap;
@@ -38,9 +39,19 @@ public class LopOfMonDAO {
     }
 
     public static boolean create(LopOfMon item) {
+        if (SinhVienDAO.getSingle(item.getSinhVien().getMaSinhVien()) == null) {
+            System.out.println("SinhVien[" + item.getSinhVien().getMaSinhVien() + "] khong ton tai!");
+            return false;
+        }
+
         if (LopOfMonDAO.getSingleByMaSinhVienAndMaMon(item.getSinhVien().getMaSinhVien(), item.getMon().getMaMon()) != null) {
             // Da ton tai SinhVien[maSinhVien] hoc Mon[maMon]
             System.out.println("Da ton tai SinhVien[" + item.getSinhVien().getMaSinhVien() + "] hoc Mon[" + item.getMon().getMaMon() + "]");
+            return false;
+        }
+
+        if (ThoiKhoaBieuDAO.getByMaMonAndMaLop(item.getMon().getMaMon(), item.getMaLop()) == null) {
+            System.out.println("Lop[" + item.getMaLop() + "] - Mon[" + item.getMon().getMaMon() + " - " + item.getMon().getTenMon() + "] khong ton tai!");
             return false;
         }
 
@@ -67,6 +78,28 @@ public class LopOfMonDAO {
         return HibernateUtils.updateRow(lopOfMon);
     }
 
+    public static boolean updateByMaSinhVienAndMaMon(LopOfMon data) {
+        LopOfMon lopOfMon = getSingleByMaSinhVienAndMaMon(data.getSinhVien().getMaSinhVien(), data.getMon().getMaMon());
+        if (lopOfMon != null) {
+            data.setId(lopOfMon.getId());
+//            System.out.println("Before : " + data.toString()); // DEBUG
+
+            return update(data);
+        }
+
+        return false;
+    }
+
+//    public static boolean updateByMaSinhVienAndMaMon(LopOfMon data, boolean res) {
+//        LopOfMon lopOfMon = getSingleByMaSinhVienAndMaMon(data.getSinhVien().getMaSinhVien(), data.getMon().getMaMon());
+//        if (lopOfMon != null) {
+//            data.setId(lopOfMon.getId());
+//            return update(data);
+//        }
+//
+//        return false;
+//    }
+
     public static boolean delete(int id) {
         LopOfMon lopOfMon = LopOfMonDAO.getSingle(id);
         if (lopOfMon == null) {
@@ -74,5 +107,14 @@ public class LopOfMonDAO {
         }
 
         return HibernateUtils.deleteRow(lopOfMon);
+    }
+
+    public static boolean deleteByMaSinhVienAndMaMon(LopOfMon data) {
+        LopOfMon lopOfMon = getSingleByMaSinhVienAndMaMon(data.getSinhVien().getMaSinhVien(), data.getMon().getMaMon());
+        if (lopOfMon != null) {
+            return HibernateUtils.deleteRow(lopOfMon);
+        }
+
+        return false;
     }
 }
