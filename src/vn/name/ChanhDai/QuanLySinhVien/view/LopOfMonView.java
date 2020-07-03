@@ -50,7 +50,10 @@ public class LopOfMonView {
         createImportCSVUI();
 
         new GetLopOfMonThread(tableLopOfMon, "all", "all").start();
+
         new GetComboBoxMaLopThread(comboBoxMaLopFilter).start();
+        new GetComboBoxMaMonThread(comboBoxMaMonFilter, "all").start();
+
         new GetComboBoxMaLopThread(comboBoxMaLopForm).start();
         new GetComboBoxMaMonThread(comboBoxMaMonForm, "all").start();
     }
@@ -73,6 +76,9 @@ public class LopOfMonView {
             if (maLop.equals("all") && maMon.equals("all")) {
                 lopOfMonList = LopOfMonDAO.getList();
                 System.out.println("Get by ...");
+            } else if (maLop.equals("all")) {
+                lopOfMonList = LopOfMonDAO.getListByMaMon(maMon);
+                System.out.println("Get by Mon(" + maMon + ")");
             } else {
                 lopOfMonList = LopOfMonDAO.getListByMaLopAndMaMon(maLop, maMon);
                 System.out.println("Get by Lop&Mon(" + maLop + "-" + maMon + ")");
@@ -368,13 +374,13 @@ public class LopOfMonView {
 
     void createUI() {
         mainFrame = new JFrame();
-        mainFrame.setTitle("Danh sách lớp");
+        mainFrame.setTitle("Danh Sách Lớp / Bảng Điểm");
 
         mainFrame.setLayout(new BorderLayout());
 
         // Frame -> Header
         JPanel panelHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
-        JLabel headerTitle = new JLabel("Danh sách lớp / Bảng điểm");
+        JLabel headerTitle = new JLabel("Danh Sách Lớp / Bảng Điểm");
         headerTitle.setFont(new Font("", Font.BOLD, 24));
         panelHeader.add(headerTitle);
 
@@ -533,7 +539,7 @@ public class LopOfMonView {
             }
         });
 
-        JButton buttonGet = new JButton("Xem danh sách");
+        JButton buttonGet = new JButton("Xem Danh Sách");
         buttonGet.addActionListener(e -> {
             SimpleComboBoxItem maLopItem = (SimpleComboBoxItem) comboBoxMaLopFilter.getSelectedItem();
             SimpleComboBoxItem maMonItem = (SimpleComboBoxItem) comboBoxMaMonFilter.getSelectedItem();
@@ -547,6 +553,7 @@ public class LopOfMonView {
 
                 if (!maLopItemValue.equals("all") && maMonItemValue.equals("all")) {
                     System.out.println("Xem Danh Sach Lop");
+                    new SinhVienView(maLopItemValue).setVisible(true);
                     return;
                 }
 
@@ -614,10 +621,10 @@ public class LopOfMonView {
         setTableColumnWidth(tableLopOfMon, 5, 64);
 
         for (int i = 6; i <= 9; ++i) {
-            setTableColumnWidth(tableLopOfMon, i, 72);
+            setTableColumnWidth(tableLopOfMon, i, 80);
         }
 
-        setTableColumnWidth(tableLopOfMon, 10, 64);
+        setTableColumnWidth(tableLopOfMon, 10, 72);
 
         ListSelectionModel selectionModel = tableLopOfMon.getSelectionModel();
         selectionModel.addListSelectionListener(e -> {

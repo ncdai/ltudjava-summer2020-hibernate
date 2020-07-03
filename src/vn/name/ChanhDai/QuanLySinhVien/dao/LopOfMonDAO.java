@@ -1,14 +1,11 @@
 package vn.name.ChanhDai.QuanLySinhVien.dao;
 
-import org.hibernate.hql.internal.ast.tree.IdentNode;
 import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
-import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * vn.edu.hcmus.fit.sv18120113.QuanLySinhVien
@@ -66,6 +63,16 @@ public class LopOfMonDAO {
 
         Map<String, String> params = new HashMap<>();
         params.put("maLop", maLop);
+        params.put("maMon", maMon);
+
+        return HibernateUtils.queryList(LopOfMon.class, hql, params);
+    }
+
+    public static List<LopOfMon> getListByMaMon(String maMon) {
+        // language=HQL
+        String hql = "select lom from LopOfMon lom where lom.mon.maMon = :maMon";
+
+        Map<String, String> params = new HashMap<>();
         params.put("maMon", maMon);
 
         return HibernateUtils.queryList(LopOfMon.class, hql, params);

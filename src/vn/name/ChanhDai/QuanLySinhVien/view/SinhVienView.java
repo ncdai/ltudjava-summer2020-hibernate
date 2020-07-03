@@ -31,11 +31,19 @@ public class SinhVienView {
     JRadioButton radioButtonDelete;
 
     public SinhVienView() {
+        constructor("all");
+    }
+
+    public SinhVienView(String maLop) {
+        constructor(maLop);
+    }
+
+    void constructor(String maLop) {
         createAndShowUI();
         createImportCSVUI();
 
-        new GetComboBoxMaLopThread(comboBoxMaLop).start();
-        new GetSinhVienThread(tableSinhVien, "all").start();
+        new GetComboBoxMaLopThread(comboBoxMaLop, maLop).start();
+        new GetSinhVienThread(tableSinhVien, maLop).start();
     }
 
     static class GetSinhVienThread extends Thread {
@@ -56,8 +64,6 @@ public class SinhVienView {
             }
 
             SimpleTableModel model = (SimpleTableModel) table.getModel();
-
-            // Reset Table
             model.clearRows();
 
             for (SinhVien sinhVien : list) {
@@ -70,20 +76,12 @@ public class SinhVienView {
 
     static class GetComboBoxMaLopThread extends Thread {
         JComboBox<SimpleComboBoxItem> comboBox;
+        String defaultValue;
 
-        GetComboBoxMaLopThread(JComboBox<SimpleComboBoxItem> comboBox) {
+        GetComboBoxMaLopThread(JComboBox<SimpleComboBoxItem> comboBox, String defaultValue) {
             this.comboBox = comboBox;
+            this.defaultValue = defaultValue;
         }
-
-//        int getValueIndex(String value) {
-//            SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
-//            for (int i = 0; i < model.getSize(); ++i) {
-//                if (value.equals(model.getElementAt(i).getValue())) {
-//                    return i;
-//                }
-//            }
-//            return -1;
-//        }
 
         @Override
         public void run() {
@@ -92,6 +90,7 @@ public class SinhVienView {
             for (String item : list) {
                 model.addElement(new SimpleComboBoxItem(item, item));
             }
+            model.setSelectedItem(defaultValue);
         }
     }
 
@@ -295,9 +294,6 @@ public class SinhVienView {
 
         importCSVButton = new JButton("Nhập File CSV");
         importCSVButton.setPreferredSize(new Dimension(120, 24));
-//        importCSVButton.addActionListener(e -> {
-//            handleImportCSVClick();
-//        });
 
         JPanel topMenuPanel = new JPanel();
         topMenuPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
