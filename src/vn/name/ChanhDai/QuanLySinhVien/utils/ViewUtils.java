@@ -115,4 +115,13 @@ public class ViewUtils {
     public static JButton createButtonBack(JFrame frame, String text) {
         return createButtonBack(frame, text, Color.decode("#eeeeee"));
     }
+
+    public static JPanel createFooter() {
+        JPanel panelFooter = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 16));
+        JLabel labelAuthor = new JLabel("Made by 18120113");
+        labelAuthor.setForeground(Color.GRAY);
+        panelFooter.add(labelAuthor);
+
+        return panelFooter;
+    }
 }

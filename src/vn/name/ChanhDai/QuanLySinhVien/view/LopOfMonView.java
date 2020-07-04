@@ -174,11 +174,11 @@ public class LopOfMonView {
                 tableModel.updateRow(rowIndex, TableUtils.toRow(lopOfMon));
                 tableModel.fireTableDataChanged();
 
-                JOptionPane.showMessageDialog(null, "Cập nhật điểm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Cập nhật Điểm cho Sinh Viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            JOptionPane.showMessageDialog(null, "Cập nhật điểm thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Cập nhật Điểm cho Sinh Viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -201,11 +201,11 @@ public class LopOfMonView {
                 tableModel.removeRow(rowIndex);
                 tableModel.fireTableDataChanged();
 
-                JOptionPane.showMessageDialog(null, "Đã xóa sinh viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " khỏi lớp " + lopOfMon.getMaLop() + "-" + lopOfMon.getMon().getMaMon() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Đã xóa Sinh Viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " khỏi Lớp " + lopOfMon.getMaLop() + "-" + lopOfMon.getMon().getMaMon() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            JOptionPane.showMessageDialog(null, "Xóa sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Xóa Sinh Viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -234,11 +234,11 @@ public class LopOfMonView {
                 tableModel.addRow(TableUtils.toRow(lopOfMon));
                 tableModel.fireTableDataChanged();
 
-                JOptionPane.showMessageDialog(null, "Đã thêm sinh viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " vào lớp " + lopOfMon.getMaLop() + "-" + lopOfMon.getMon().getMaMon() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Đã thêm Sinh Viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " vào Lớp " + lopOfMon.getMaLop() + "-" + lopOfMon.getMon().getMaMon() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            JOptionPane.showMessageDialog(null, "Thêm sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Thêm Sinh Viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -298,7 +298,7 @@ public class LopOfMonView {
                 boolean success = LopOfMonDAO.updateByMaSinhVienAndMaMon(lopOfMon);
                 if (success) {
                     ++actualImportQuantity;
-                    tableDraftModel.setValueAt(i, 8, "[ Thành công ]");
+                    tableDraftModel.setValueAt(i, 8, "[ Thành Công ]");
 
                     int rowIndex = findIndex(maSinhVien, maMon);
                     if (rowIndex != -1) {
@@ -313,7 +313,7 @@ public class LopOfMonView {
                 tableTargetModel.fireTableDataChanged();
             }
 
-            JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Đã nhập Bảng Điểm thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -453,15 +453,15 @@ public class LopOfMonView {
             @Override
             public Vector<String> getColumnNames() {
                 Vector<String> columnNames = new Vector<>();
-                columnNames.add("Mã lớp");
-                columnNames.add("Mã môn");
+                columnNames.add("Mã Lớp");
+                columnNames.add("Mã Môn");
                 columnNames.add("MSSV");
-                columnNames.add("Họ tên");
+                columnNames.add("Họ Tên");
                 columnNames.add("Điểm GK");
                 columnNames.add("Điểm CK");
                 columnNames.add("Điểm Khác");
                 columnNames.add("Điểm Tổng");
-                columnNames.add("Trạng thái");
+                columnNames.add("Trạng Thái");
 
                 return columnNames;
             }
@@ -479,7 +479,7 @@ public class LopOfMonView {
                     row.add(TableUtils.toString(lopOfMon.getDiemCK()));
                     row.add(TableUtils.toString(lopOfMon.getDiemKhac()));
                     row.add(TableUtils.toString(lopOfMon.getDiemTong()));
-                    row.add("[ Đang chờ ]");
+                    row.add("[ Đang Chờ ]");
                     return row;
                 }
 
@@ -539,7 +539,7 @@ public class LopOfMonView {
                 new GetLopOfMonThread(tableLopOfMon, maLopItemValue, maMonItemValue).start();
 
             } else {
-                JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông Báo", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -552,7 +552,7 @@ public class LopOfMonView {
             if (!maLop.equals("all") && !maMon.equals("all")) {
                 new LopOfMonThongKeView(maLop, maMon);
             } else {
-                JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông Báo", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -724,7 +724,7 @@ public class LopOfMonView {
             Double diemTong = (Double) spinnerDiemTong.getValue();
 
             if (maLop.equals("") || maMon.equals("") || maSinhVien.equals("")) {
-                JOptionPane.showMessageDialog(null, "Bạn chưa nhập đủ thông tin!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Bạn chưa nhập đủ thông tin!", "Thông Báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -753,7 +753,7 @@ public class LopOfMonView {
                 int confirm = JOptionPane.showConfirmDialog(
                     mainFrame,
                     "Bạn chắn chắn muốn xóa Sinh Viên " + lopOfMon.getSinhVien().getMaSinhVien() + " - " + lopOfMon.getSinhVien().getHoTen() + " khỏi Lớp " + lopOfMon.getMaLop() + "-" + lopOfMon.getMon().getMaMon() + "?",
-                    "Xác nhận",
+                    "Xác Nhận",
                     JOptionPane.OK_CANCEL_OPTION
                 );
 

@@ -117,7 +117,7 @@ public class SinhVienView {
 
                 boolean success = SinhVienDAO.create(sinhVien);
                 if (success) {
-                    tableDraftModel.setValueAt(i, 5, "[ Thành công ]");
+                    tableDraftModel.setValueAt(i, 5, "[ Thành Công ]");
                     tableTargetModel.addRow(TableUtils.toRow(sinhVien));
                     ++actualImportQuantity;
                 } else {
@@ -128,7 +128,7 @@ public class SinhVienView {
                 tableTargetModel.fireTableDataChanged();
             }
 
-            JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " sinh viên)", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Đã nhập Danh Sách Sinh Viên thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " Sinh Viên)", "Kết Quả", JOptionPane.INFORMATION_MESSAGE);
 
             new GetComboBoxMaLopThread(comboBoxMaLop, "all").start();
         }
@@ -141,11 +141,11 @@ public class SinhVienView {
             tableModel.addRow(TableUtils.toRow(sinhVien));
             tableModel.fireTableDataChanged();
 
-            JOptionPane.showMessageDialog(mainFrame, "Thêm sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Thêm Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(mainFrame, "Thêm sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Thêm Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public void updateSinhVien(SinhVien sinhVien, int row) {
@@ -155,18 +155,18 @@ public class SinhVienView {
             tableModel.updateRow(row, TableUtils.toRow(sinhVien));
             tableModel.fireTableDataChanged();
 
-            JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public void deleteSinhVien(SinhVien sinhVien, int row) {
         int confirm = JOptionPane.showConfirmDialog(
             mainFrame,
-            "Bạn chắn chắn muốn xóa sinh viên " + sinhVien.getMaSinhVien() + "?",
-            "Xác nhận",
+            "Bạn chắn chắn muốn xóa Sinh Viên " + sinhVien.getMaSinhVien() + "?",
+            "Xác Nhận",
             JOptionPane.OK_CANCEL_OPTION
         );
 
@@ -181,11 +181,11 @@ public class SinhVienView {
                 tableSinhVien.setRowSelectionInterval(0, 0);
             }
 
-            JOptionPane.showMessageDialog(mainFrame, "Xóa sinh viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(mainFrame, "Xóa Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        JOptionPane.showMessageDialog(mainFrame, "Xóa sinh viên thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(mainFrame, "Xóa Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
     public SinhVien getSeletedRow() {
@@ -272,12 +272,12 @@ public class SinhVienView {
 
     public void createAndShowUI() {
         mainFrame = new JFrame();
-        mainFrame.setTitle("Danh Sách Sinh Viên");
+        mainFrame.setTitle("Sinh Viên");
 
         BorderLayout layout = new BorderLayout();
         mainFrame.setLayout(layout);
 
-        JLabel title = new JLabel("Danh Sách Sinh Viên");
+        JLabel title = new JLabel("Sinh Viên");
         title.setFont(new Font("", Font.BOLD, 24));
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
 
@@ -335,8 +335,8 @@ public class SinhVienView {
 
         Vector<String> columnNames = new Vector<>();
         columnNames.add("MSSV");
-        columnNames.add("Họ tên");
-        columnNames.add("Giới tính");
+        columnNames.add("Họ Tên");
+        columnNames.add("Giới Tính");
         columnNames.add("CMND");
         columnNames.add("Lớp");
 
@@ -367,7 +367,7 @@ public class SinhVienView {
         form.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         formPanel.add(form);
 
-        radioButtonUpdate = ViewUtils.createRadioButton("Cập Nhật", 96, 24, SwingConstants.CENTER);
+        radioButtonUpdate = ViewUtils.createRadioButton("Sửa SV", 96, 24, SwingConstants.CENTER);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -425,12 +425,11 @@ public class SinhVienView {
         textFieldCMND = new JTextField();
         form.add(textFieldCMND, ViewUtils.createFormConstraints(1, 4, 2, 4, 0, 4, 0));
 
-
         form.add(new JLabel("Mã Lớp"), ViewUtils.createFormConstraints(0, 5, 1, 4, 0, 4, 0));
         textFieldMaLop = new JTextField();
         form.add(textFieldMaLop, ViewUtils.createFormConstraints(1, 5, 2, 4, 0, 4, 0));
 
-        JButton buttonSubmit = new JButton("Thực hiện");
+        JButton buttonSubmit = new JButton("Thực Hiện");
         form.add(buttonSubmit, ViewUtils.createFormConstraints(0, 6, 3, 4, 0, 0, 0));
 
         buttonSubmit.addActionListener(e -> {
@@ -441,7 +440,7 @@ public class SinhVienView {
             String maLop = textFieldMaLop.getText();
 
             if (maSinhVien.equals("") || hoTen.equals("") || gioiTinh == null || gioiTinh.equals("") || cmnd.equals("") || maLop.equals("")) {
-                JOptionPane.showMessageDialog(mainFrame, "Bạn chưa nhập đủ thông tin!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainFrame, "Bạn chưa nhập đủ thông tin!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 

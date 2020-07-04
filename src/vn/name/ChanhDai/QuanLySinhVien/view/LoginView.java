@@ -37,7 +37,7 @@ public class LoginView {
 
     void createUI() {
         mainFrame = new JFrame();
-        mainFrame.setTitle("Chào mừng bạn đến với Phần Mềm Quản Lý Sinh Viên");
+        mainFrame.setTitle("Phần Mềm Quản Lý Sinh Viên - by 18120113@hcmus");
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         mainFrame.setLayout(new BorderLayout());
@@ -51,7 +51,9 @@ public class LoginView {
         form.add(title, ViewUtils.createFormConstraints(0, 0, 3, 0, 0, 8, 0));
 
         JRadioButton radioButtonGiaoVu = ViewUtils.createRadioButton("Quản Lý", 112, 24, SwingConstants.CENTER);
+        radioButtonGiaoVu.addActionListener(e -> resetForm());
         JRadioButton radioButtonSinhVien = ViewUtils.createRadioButton("Sinh Viên", 112, 24, SwingConstants.CENTER);
+        radioButtonSinhVien.addActionListener(e -> resetForm());
 
         radioButtonGiaoVu.setSelected(true);
 
@@ -133,8 +135,17 @@ public class LoginView {
 
         mainFrame.add(temp, BorderLayout.CENTER);
 
+        JPanel panelFooter = ViewUtils.createFooter();
+        mainFrame.add(panelFooter, BorderLayout.PAGE_END);
+
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
+    }
+
+    void resetForm() {
+        passwordFieldMatKhau.setText("");
+        textFieldTenDangNhap.setText("");
+        textFieldTenDangNhap.requestFocus();
     }
 
     public void setVisible(boolean visible) {

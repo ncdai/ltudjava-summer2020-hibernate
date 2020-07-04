@@ -145,7 +145,7 @@ public class ThoiKhoaBieuView {
                         }
                     }
 
-                    tableDraftModel.setValueAt( i, 4, "[ Thành công ]");
+                    tableDraftModel.setValueAt( i, 4, "[ Thành Công ]");
                     tableTargetModel.addRow(TableUtils.toRow(thoiKhoaBieu));
                     ++actualImportQuantity;
 
@@ -157,7 +157,7 @@ public class ThoiKhoaBieuView {
                 tableTargetModel.fireTableDataChanged();
             }
 
-            JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Đã nhập Thời Khóa Biểu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
 
             // Cap nhat lai du lieu comboBoxMaLop
             new GetComboBoxMaLopThread(comboBoxMaLop).start();
@@ -166,6 +166,7 @@ public class ThoiKhoaBieuView {
 
     private void createAndShowUI() {
         mainFrame = new JFrame();
+        mainFrame.setTitle("Thời Khóa Biểu");
         mainFrame.setLayout(new BorderLayout());
 
         JPanel panelPageStart = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
@@ -219,10 +220,10 @@ public class ThoiKhoaBieuView {
         panelCenterHeader.add(buttonImportCSV);
 
         Vector<String> columnNames = new Vector<>();
-        columnNames.add("Mã lớp");
-        columnNames.add("Mã môn");
-        columnNames.add("Tên môn");
-        columnNames.add("Phòng học");
+        columnNames.add("Mã Lớp");
+        columnNames.add("Mã Môn");
+        columnNames.add("Tên Môn");
+        columnNames.add("Phòng Học");
 
         tableThoiKhoaBieu = ViewUtils.createSimpleTable(new SimpleTableModel(columnNames, null));
 
@@ -246,11 +247,11 @@ public class ThoiKhoaBieuView {
             @Override
             public Vector<String> getColumnNames() {
                 Vector<String> columnNames = new Vector<>();
-                columnNames.add("Mã lớp");
-                columnNames.add("Mã môn");
-                columnNames.add("Tên môn");
-                columnNames.add("Phòng học");
-                columnNames.add("Trạng thái");
+                columnNames.add("Mã Lớp");
+                columnNames.add("Mã Môn");
+                columnNames.add("Tên Môn");
+                columnNames.add("Phòng Học");
+                columnNames.add("Trạng Thái");
 
                 return columnNames;
             }
@@ -260,7 +261,7 @@ public class ThoiKhoaBieuView {
                 ThoiKhoaBieu thoiKhoaBieu = CSVUtils.parseThoiKhoaBieu(str);
                 if (thoiKhoaBieu != null) {
                     Vector<String> row = TableUtils.toRow(thoiKhoaBieu);
-                    row.add("[ Đang chờ ]");
+                    row.add("[ Đang Chờ ]");
                     return row;
                 }
 
