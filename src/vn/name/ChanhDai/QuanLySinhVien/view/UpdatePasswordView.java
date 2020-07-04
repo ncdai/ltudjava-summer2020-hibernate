@@ -4,6 +4,8 @@ import vn.name.ChanhDai.QuanLySinhVien.utils.ViewUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * vn.name.ChanhDai.QuanLySinhVien.view
@@ -24,25 +26,46 @@ public abstract class UpdatePasswordView {
 
     void createUI() {
         frame = new JFrame();
-        frame.setTitle("Đổi mật khẩu");
+        frame.setTitle("Đổi Mật Khẩu");
+        frame.setLayout(new BorderLayout());
 
         JPanel form = new JPanel();
         form.setLayout(new GridBagLayout());
         form.setBorder(BorderFactory.createEmptyBorder(32, 64, 32, 64));
+        form.setBackground(Color.WHITE);
 
-        JLabel labelTitle = new JLabel("Đổi mật khẩu");
+        JLabel labelTitle = new JLabel("Đổi Mật Khẩu");
         labelTitle.setFont(new Font("", Font.BOLD, 20));
         form.add(labelTitle, ViewUtils.createFormConstraints(0, 0, 2));
 
         passwordFieldMatKhauHienTai = new JPasswordField(10);
+        passwordFieldMatKhauHienTai.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // Pressed Enter -> Focus passwordFieldMatKhauMoi
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    passwordFieldMatKhauMoi.requestFocus();
+                }
+            }
+        });
         form.add(new JLabel("Mật khẩu hiện tại"), ViewUtils.createFormConstraints(0, 1, 1, 8, 8, 8, 0));
         form.add(passwordFieldMatKhauHienTai, ViewUtils.createFormConstraints(1, 1, 1, 8, 0));
 
         passwordFieldMatKhauMoi = new JPasswordField();
+        passwordFieldMatKhauMoi.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // Pressed Enter -> Submit
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    buttonSubmit.doClick();
+                }
+            }
+        });
+
         form.add(new JLabel("Mật khẩu mới"), ViewUtils.createFormConstraints(0, 2, 1));
         form.add(passwordFieldMatKhauMoi, ViewUtils.createFormConstraints(1, 2, 1));
 
-        buttonSubmit = new JButton("Đổi mật khẩu");
+        buttonSubmit = new JButton("Đổi Mật Khẩu");
         buttonSubmit.addActionListener(e -> {
             String matKhauHienTai = String.valueOf(passwordFieldMatKhauHienTai.getPassword());
             String matKhauMoi = String.valueOf(passwordFieldMatKhauMoi.getPassword());
@@ -56,7 +79,11 @@ public abstract class UpdatePasswordView {
         });
         form.add(buttonSubmit, ViewUtils.createFormConstraints(0, 3, 2, 8, 0, 0, 0));
 
-        frame.getContentPane().add(form);
+        JPanel temp = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        temp.setBorder(BorderFactory.createEmptyBorder(64, 64, 64, 64));
+        temp.add(form);
+
+        frame.add(temp, BorderLayout.CENTER);
 
         frame.pack();
         frame.setLocationRelativeTo(null);

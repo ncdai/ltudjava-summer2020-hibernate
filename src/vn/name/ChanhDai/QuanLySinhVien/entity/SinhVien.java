@@ -1,7 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.entity;
 
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * vn.edu.hcmus.fit.sv18120113.QuanLySinhVien

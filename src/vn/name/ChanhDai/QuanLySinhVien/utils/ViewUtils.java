@@ -95,4 +95,24 @@ public class ViewUtils {
 
         return comboBox;
     }
+
+    public static JButton createButtonBack(JFrame frame, String text, Color background) {
+        JButton buttonBack = new JButton(text, ViewUtils.createImageIcon("assets/images/back.png"));
+        buttonBack.setBorderPainted(false);
+        buttonBack.setBorder(null);
+        buttonBack.setBackground(background);
+        buttonBack.setFont(new Font("", Font.BOLD, 14));
+        buttonBack.setForeground(Color.GRAY);
+        buttonBack.setFocusPainted(false);
+        buttonBack.setIconTextGap(8);
+        buttonBack.addActionListener(e -> {
+            frame.setVisible(false);
+        });
+
+        return buttonBack;
+    }
+
+    public static JButton createButtonBack(JFrame frame, String text) {
+        return createButtonBack(frame, text, Color.decode("#eeeeee"));
+    }
 }

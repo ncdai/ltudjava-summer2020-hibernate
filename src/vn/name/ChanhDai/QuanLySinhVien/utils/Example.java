@@ -10,7 +10,6 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
 import java.util.List;
-import java.util.Map;
 
 public class Example {
     public static void CSVReaderExample() {

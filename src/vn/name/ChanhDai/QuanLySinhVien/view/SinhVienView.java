@@ -5,7 +5,6 @@ import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
 import javax.swing.*;
-import javax.swing.text.View;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
@@ -94,7 +93,7 @@ public class SinhVienView {
             SimpleComboBoxModel model = (SimpleComboBoxModel) comboBox.getModel();
 
             model.removeAllElements();
-            model.addElement(new SimpleComboBoxItem("all", "Tất cả"));
+            model.addElement(new SimpleComboBoxItem("all", "Tất Cả"));
 
             for (String item : list) {
                 model.addElement(new SimpleComboBoxItem(item, item));
@@ -106,10 +105,12 @@ public class SinhVienView {
     static class ImportCSVThread extends Thread {
         JTable tableDraft;
         JTable tableTarget;
+        JComboBox<SimpleComboBoxItem> comboBoxMaLop;
 
-        ImportCSVThread(JTable tableDraft, JTable tableTarget) {
+        ImportCSVThread(JTable tableDraft, JTable tableTarget, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
             this.tableDraft = tableDraft;
             this.tableTarget = tableTarget;
+            this.comboBoxMaLop = comboBoxMaLop;
         }
 
         @Override
@@ -125,11 +126,11 @@ public class SinhVienView {
 
                 boolean success = SinhVienDAO.create(sinhVien);
                 if (success) {
-                    tableDraftModel.setValueAt(i, 5, "[SUCCESS]");
+                    tableDraftModel.setValueAt(i, 5, "[ Thành công ]");
                     tableTargetModel.addRow(TableUtils.toRow(sinhVien));
                     ++actualImportQuantity;
                 } else {
-                    tableDraftModel.setValueAt(i, 5, "[FAILED]");
+                    tableDraftModel.setValueAt(i, 5, "[ Lỗi ]");
                 }
 
                 tableDraftModel.fireTableDataChanged();
@@ -137,6 +138,8 @@ public class SinhVienView {
             }
 
             JOptionPane.showMessageDialog(null, "Đã nhập dữ liệu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " sinh viên)", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
+
+            new GetComboBoxMaLopThread(comboBoxMaLop, "all").start();
         }
     }
 
@@ -257,7 +260,7 @@ public class SinhVienView {
 
                 if (sinhVien != null) {
                     Vector<String> row = TableUtils.toRow(sinhVien);
-                    row.add("[PENDING]");
+                    row.add("[ Đang chờ ]");
                     return row;
                 }
 
@@ -266,8 +269,7 @@ public class SinhVienView {
 
             @Override
             public void startImport(JTable tablePreview) {
-                new ImportCSVThread(tablePreview, tableSinhVien).start();
-                System.out.println("Start Import");
+                new ImportCSVThread(tablePreview, tableSinhVien, comboBoxMaLop).start();
             }
 
             @Override
@@ -287,19 +289,18 @@ public class SinhVienView {
         JLabel title = new JLabel("Danh Sách Sinh Viên");
         title.setFont(new Font("", Font.BOLD, 24));
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
+
+        headerPanel.add(ViewUtils.createButtonBack(mainFrame, "Trở về"));
         headerPanel.add(title);
 
-        JLabel labelFilter = new JLabel("Xem lớp");
+        JLabel labelFilter = new JLabel("Xem Lớp");
 
-        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất cả"));
+        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất Cả"));
         comboBoxMaLop.setPreferredSize(new Dimension(144, 24));
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
-                String label = item.getLabel();
                 String maLop = item.getValue();
-                System.out.println("[label=" + label + "][value=" + maLop + "]");
-
                 new GetSinhVienThread(tableSinhVien, maLop).start();
             }
         });
@@ -374,7 +375,7 @@ public class SinhVienView {
         form.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         formPanel.add(form);
 
-        radioButtonUpdate = ViewUtils.createRadioButton("Cập nhật", 96, 24, SwingConstants.CENTER);
+        radioButtonUpdate = ViewUtils.createRadioButton("Cập Nhật", 96, 24, SwingConstants.CENTER);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -384,6 +385,7 @@ public class SinhVienView {
 
             setFormEnabled(true);
             textFieldMaSinhVien.setEnabled(false);
+            textFieldHoTen.requestFocus();
         });
 
         radioButtonCreate = ViewUtils.createRadioButton("Thêm SV", 96, 24, SwingConstants.CENTER);
@@ -392,6 +394,7 @@ public class SinhVienView {
 
             resetForm();
             setFormEnabled(true);
+            textFieldMaSinhVien.requestFocus();
         });
 
         radioButtonDelete = ViewUtils.createRadioButton("Xóa SV", 96, 24, SwingConstants.CENTER);
@@ -417,11 +420,11 @@ public class SinhVienView {
         textFieldMaSinhVien.setEnabled(false);
         form.add(textFieldMaSinhVien, ViewUtils.createFormConstraints(1, 1, 2, 4, 0, 4, 0));
 
-        form.add(new JLabel("Họ và tên"), ViewUtils.createFormConstraints(0, 2, 1, 4, 0, 4, 0));
+        form.add(new JLabel("Họ và Tên"), ViewUtils.createFormConstraints(0, 2, 1, 4, 0, 4, 0));
         textFieldHoTen = new JTextField();
         form.add(textFieldHoTen, ViewUtils.createFormConstraints(1, 2, 2, 4, 0, 4, 0));
 
-        form.add(new JLabel("Giới tính"), ViewUtils.createFormConstraints(0, 3, 1, 4, 0, 4, 0));
+        form.add(new JLabel("Giới Tính"), ViewUtils.createFormConstraints(0, 3, 1, 4, 0, 4, 0));
         String[] gioiTinhList = {"Nam", "Nữ", "Khác"};
         comboBoxGioiTinh = new JComboBox<>(gioiTinhList);
         form.add(comboBoxGioiTinh, ViewUtils.createFormConstraints(1, 3, 2, 4, 0, 4, 0));
@@ -431,7 +434,7 @@ public class SinhVienView {
         form.add(textFieldCMND, ViewUtils.createFormConstraints(1, 4, 2, 4, 0, 4, 0));
 
 
-        form.add(new JLabel("Mã lớp"), ViewUtils.createFormConstraints(0, 5, 1, 4, 0, 4, 0));
+        form.add(new JLabel("Mã Lớp"), ViewUtils.createFormConstraints(0, 5, 1, 4, 0, 4, 0));
         textFieldMaLop = new JTextField();
         form.add(textFieldMaLop, ViewUtils.createFormConstraints(1, 5, 2, 4, 0, 4, 0));
 
@@ -494,6 +497,8 @@ public class SinhVienView {
 
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
-        initData("all");
+        if (visible) {
+            initData("all");
+        }
     }
 }

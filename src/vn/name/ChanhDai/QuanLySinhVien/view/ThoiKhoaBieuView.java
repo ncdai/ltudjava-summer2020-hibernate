@@ -84,7 +84,7 @@ public class ThoiKhoaBieuView {
             SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
 
             model.removeAllElements();
-            model.addElement(new SimpleComboBoxItem("all", "Tất cả"));
+            model.addElement(new SimpleComboBoxItem("all", "Tất Cả"));
 
             for (String item : list) {
                 boolean check = true;
@@ -143,12 +143,12 @@ public class ThoiKhoaBieuView {
                         }
                     }
 
-                    tableDraftModel.setValueAt( i, 4, "[SUCCESS]");
+                    tableDraftModel.setValueAt( i, 4, "[ Thành công ]");
                     tableTargetModel.addRow(TableUtils.toRow(thoiKhoaBieu));
                     ++actualImportQuantity;
 
                 } else {
-                    tableDraftModel.setValueAt( i, 4, "[FAILED]");
+                    tableDraftModel.setValueAt( i, 4, "[ Lỗi ]");
                 }
 
                 tableDraftModel.fireTableDataChanged();
@@ -166,12 +166,14 @@ public class ThoiKhoaBieuView {
         mainFrame = new JFrame();
         mainFrame.setLayout(new BorderLayout());
 
-        JPanel panelPageStart = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 16));
-        JLabel labelTitle = new JLabel("Thời khóa biểu");
+        JPanel panelPageStart = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
+        JLabel labelTitle = new JLabel("Thời Khóa Biểu");
         labelTitle.setFont(new Font("", Font.BOLD, 24));
+
+        panelPageStart.add(ViewUtils.createButtonBack(mainFrame, "Trở về"));
         panelPageStart.add(labelTitle);
 
-        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất cả"));
+        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất Cả"));
         comboBoxMaLop.setPreferredSize(new Dimension(144, 24));
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
@@ -258,7 +260,7 @@ public class ThoiKhoaBieuView {
                 ThoiKhoaBieu thoiKhoaBieu = CSVUtils.parseThoiKhoaBieu(str);
                 if (thoiKhoaBieu != null) {
                     Vector<String> row = TableUtils.toRow(thoiKhoaBieu);
-                    row.add("[PENDING]");
+                    row.add("[ Đang chờ ]");
                     return row;
                 }
 
@@ -267,7 +269,6 @@ public class ThoiKhoaBieuView {
 
             @Override
             public void startImport(JTable tablePreview) {
-                System.out.println("Start Import");
                 new ImportCSVThread(tablePreview, tableThoiKhoaBieu, comboBoxMaLop).start();
             }
 

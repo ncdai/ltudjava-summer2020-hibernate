@@ -70,20 +70,21 @@ public abstract class FileChooserView {
         importCSVFrame = new JFrame();
         importCSVFrame.setTitle("Nhập File CSV");
 
-        BorderLayout borderLayout = new BorderLayout(0, 8);
+        BorderLayout borderLayout = new BorderLayout();
         importCSVFrame.setLayout(borderLayout);
 
         JPanel panelHeader = new JPanel();
         panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.X_AXIS));
-        panelHeader.setBackground(Color.WHITE);
-        panelHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 16));
+        panelHeader.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
         JButton buttonChooseAnotherFile = new JButton("Chọn File Khác");
-        buttonChooseAnotherFile.setBackground(Color.decode("#eeeeee"));
+        buttonChooseAnotherFile.setBackground(Color.WHITE);
         JButton buttonImport = new JButton("Bắt Đầu Nhập");
 
         JLabel labelTitle = new JLabel("Trình Nhập File CSV");
         labelTitle.setFont(new Font("", Font.BOLD, 24));
+        panelHeader.add(ViewUtils.createButtonBack(importCSVFrame, "Xong"));
+        panelHeader.add(Box.createRigidArea(new Dimension(16, 0)));
         panelHeader.add(labelTitle);
         panelHeader.add(Box.createHorizontalGlue());
         panelHeader.add(buttonChooseAnotherFile);
@@ -94,7 +95,7 @@ public abstract class FileChooserView {
         customTable(tablePreview);
 
         JScrollPane scrollPane = new JScrollPane(tablePreview);
-        scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
         scrollPane.setPreferredSize(new Dimension(720, scrollPane.getPreferredSize().height));
 
         Container contentPance = importCSVFrame.getContentPane();
@@ -103,7 +104,18 @@ public abstract class FileChooserView {
 
         buttonChooseAnotherFile.addActionListener(e -> chooseFile());
 
-        buttonImport.addActionListener(e -> startImport(tablePreview));
+        buttonImport.addActionListener(e -> {
+//            int confirm = JOptionPane.showConfirmDialog(
+//                importCSVFrame,
+//                "Dữ liệu đã sẵn sàng để Nhập?",
+//                "Xác Nhận Nhập Dữ Liệu",
+//                JOptionPane.OK_CANCEL_OPTION
+//            );
+
+//            if (confirm != JOptionPane.YES_OPTION) return;
+
+            startImport(tablePreview);
+        });
 
         importCSVFrame.pack();
         importCSVFrame.setLocationRelativeTo(null);

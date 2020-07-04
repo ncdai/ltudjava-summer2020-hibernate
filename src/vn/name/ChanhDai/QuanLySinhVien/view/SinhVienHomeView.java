@@ -11,6 +11,7 @@ import vn.name.ChanhDai.QuanLySinhVien.utils.ViewUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 /**
  * vn.name.ChanhDai.QuanLySinhVien.view
@@ -48,38 +49,14 @@ public class SinhVienHomeView {
         createAndShowUI();
     }
 
-    static class GetBangDiemThread extends Thread {
-        JTable table;
-        String maSinhVien;
-
-        public GetBangDiemThread(JTable table, String maSinhVien) {
-            this.table = table;
-            this.maSinhVien = maSinhVien;
-        }
-
-        @Override
-        public void run() {
-            List<LopOfMon> lopOfMonList = LopOfMonDAO.getListByMaSinhVien(maSinhVien);
-
-            SimpleTableModel tableModel = (SimpleTableModel) table.getModel();
-            tableModel.clearRows();
-
-            for (LopOfMon lopOfMon : lopOfMonList) {
-                tableModel.addRow(TableUtils.toRow(lopOfMon));
-            }
-
-            tableModel.fireTableDataChanged();
-        }
-    }
-
     private void createAndShowUI() {
         frame = new JFrame();
-        frame.setTitle("Sinh Viên");
+        frame.setTitle("Kết Quả Học Tập");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         labelUser = new JLabel();
-        JPanel panelHeader = GiaoVuHomeView.createHeader("Quản Lý Học Tập", labelUser, frame, updatePasswordView, loginView);
+        JPanel panelHeader = GiaoVuHomeView.createHeader("Kết Quả Học Tập", labelUser, frame, updatePasswordView, loginView);
 
         tableDiem = ViewUtils.createSimpleTable(new SimpleTableModel(LopOfMonView.getTableColumnNames(), null));
 
@@ -105,13 +82,52 @@ public class SinhVienHomeView {
         frame.setLocationRelativeTo(null);
     }
 
+    void updateTableData(Set<LopOfMon> lopOfMonList) {
+        SimpleTableModel tableModel = (SimpleTableModel) tableDiem.getModel();
+        tableModel.clearRows();
+
+        for (LopOfMon lopOfMon : lopOfMonList) {
+            tableModel.addRow(TableUtils.toRow(lopOfMon));
+        }
+
+        tableModel.fireTableDataChanged();
+    }
+
     public void setSinhVien(SinhVien sinhVien) {
         this.sinhVien = sinhVien;
-        labelUser.setText(sinhVien.getHoTen() + " (" + sinhVien.getMaSinhVien() + ")");
-        new GetBangDiemThread(tableDiem, sinhVien.getMaSinhVien()).start();
+        labelUser.setText("Hi, " + sinhVien.getHoTen() + " (" + sinhVien.getMaSinhVien() + ") !");
+
+        Set<LopOfMon> list = sinhVien.getDanhSachLop();
+        updateTableData(list);
     }
 
     public void setVisible(boolean visible) {
         frame.setVisible(visible);
     }
 }
+
+//DRAFT
+// new GetBangDiemThread(tableDiem, sinhVien.getMaSinhVien()).start();
+//static class GetBangDiemThread extends Thread {
+//    JTable table;
+//    String maSinhVien;
+//
+//    public GetBangDiemThread(JTable table, String maSinhVien) {
+//        this.table = table;
+//        this.maSinhVien = maSinhVien;
+//    }
+//
+//    @Override
+//    public void run() {
+//        List<LopOfMon> lopOfMonList = LopOfMonDAO.getListByMaSinhVien(maSinhVien);
+//
+//        SimpleTableModel tableModel = (SimpleTableModel) table.getModel();
+//        tableModel.clearRows();
+//
+//        for (LopOfMon lopOfMon : lopOfMonList) {
+//            tableModel.addRow(TableUtils.toRow(lopOfMon));
+//        }
+//
+//        tableModel.fireTableDataChanged();
+//    }
+//}

@@ -61,17 +61,17 @@ public class GiaoVuHomeView {
         menuPanel.setLayout(menuPanelLayout);
         menuPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
-        JButton sinhVienListButton = createButtonFeature("Danh sách sinh viên", "assets/images/user-graduate-solid.png", Color.decode("#ff4757"));
+        JButton sinhVienListButton = createButtonFeature("Sinh Viên", "assets/images/user-graduate-solid.png", Color.decode("#ff4757"));
         sinhVienListButton.addActionListener(e -> {
             sinhVienView.setVisible(true);
         });
 
-        JButton thoiKhoaBieuButton = createButtonFeature("Thời khóa biểu", "assets/images/calendar-alt-solid.png", Color.decode("#2ed573"));
+        JButton thoiKhoaBieuButton = createButtonFeature("Thời Khóa Biểu", "assets/images/calendar-alt-solid.png", Color.decode("#2ed573"));
         thoiKhoaBieuButton.addActionListener(e -> {
             thoiKhoaBieuView.setVisible(true);
         });
 
-        JButton lopOfMonButton = createButtonFeature("Danh sách lớp / Bảng điểm", "assets/images/users-class.png", Color.decode("#0984e3"));
+        JButton lopOfMonButton = createButtonFeature("Danh Sách Lớp / Bảng Điểm", "assets/images/users-class.png", Color.decode("#0984e3"));
         lopOfMonButton.addActionListener(e -> {
             lopOfMonView.setVisible(true);
         });
@@ -112,6 +112,7 @@ public class GiaoVuHomeView {
         button.setBorder(null);
         button.setBackground(background);
         button.setForeground(Color.WHITE);
+        button.setFont(new Font("", Font.BOLD, 14));
 
         return button;
     }
@@ -142,8 +143,17 @@ public class GiaoVuHomeView {
         JButton buttonLogout = new JButton("Đăng xuất");
         buttonLogout.setBackground(Color.decode("#eeeeee"));
         buttonLogout.addActionListener(e -> {
-            frame.setVisible(false);
-            loginView.setVisible(true);
+            int confirm = JOptionPane.showConfirmDialog(
+                null,
+                "Bạn chắn chắn muốn đăng xuất ?",
+                "Đăng xuất",
+                JOptionPane.OK_CANCEL_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                frame.setVisible(false);
+                loginView.setVisible(true);
+            }
         });
 
         panelHeader.add(buttonLogout);
@@ -154,7 +164,7 @@ public class GiaoVuHomeView {
     public void setAdmin(Admin admin) {
         this.admin = admin;
 
-        labelUser.setText(admin.getHoTen() + " (" + admin.getTenDangNhap() + ")");
+        labelUser.setText("Hi, " + admin.getHoTen() + " (" + admin.getTenDangNhap() + ") !");
     }
 
     public void setVisible(boolean visible) {

@@ -287,7 +287,7 @@ public class LopOfMonView {
                 boolean success = LopOfMonDAO.updateByMaSinhVienAndMaMon(lopOfMon);
                 if (success) {
                     ++actualImportQuantity;
-                    tableDraftModel.setValueAt(i, 8, "[SUCCESS]");
+                    tableDraftModel.setValueAt(i, 8, "[ Thành công ]");
 
                     int rowIndex = findIndex(maSinhVien, maMon);
                     if (rowIndex != -1) {
@@ -295,7 +295,7 @@ public class LopOfMonView {
                     }
 
                 } else {
-                    tableDraftModel.setValueAt(i, 8, "[FAILED]");
+                    tableDraftModel.setValueAt(i, 8, "[ Lỗi ]");
                 }
 
                 tableDraftModel.fireTableDataChanged();
@@ -388,6 +388,7 @@ public class LopOfMonView {
         JPanel panelHeader = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 16));
         JLabel headerTitle = new JLabel("Danh Sách Lớp / Bảng Điểm");
         headerTitle.setFont(new Font("", Font.BOLD, 24));
+        panelHeader.add(ViewUtils.createButtonBack(mainFrame, "Trở về"));
         panelHeader.add(headerTitle);
 
         // Frame -> Main -> Filter
@@ -467,7 +468,7 @@ public class LopOfMonView {
                     row.add(TableUtils.toString(lopOfMon.getDiemCK()));
                     row.add(TableUtils.toString(lopOfMon.getDiemKhac()));
                     row.add(TableUtils.toString(lopOfMon.getDiemTong()));
-                    row.add("[PENDING]");
+                    row.add("[ Đang chờ ]");
                     return row;
                 }
 
@@ -476,7 +477,6 @@ public class LopOfMonView {
 
             @Override
             public void startImport(JTable tablePreview) {
-                System.out.println("Start Import");
                 new ImportCSVThread(tablePreview, tableLopOfMon).start();
             }
 

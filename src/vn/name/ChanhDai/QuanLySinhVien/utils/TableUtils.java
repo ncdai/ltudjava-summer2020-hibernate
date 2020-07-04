@@ -5,9 +5,6 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
-import javax.swing.*;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.util.Vector;
 
 /**
