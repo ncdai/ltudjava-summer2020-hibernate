@@ -80,17 +80,6 @@ public class GiaoVuHomeView {
         menuPanel.add(thoiKhoaBieuButton, ViewUtils.createFormConstraints(1, 0, 1, 0, 16, 0, 16));
         menuPanel.add(lopOfMonButton, ViewUtils.createFormConstraints(2, 0, 1));
 
-        JButton buttonUpdatePassword = new JButton("Đổi mật khẩu");
-        buttonUpdatePassword.addActionListener(e -> {
-            updatePasswordView.setVisible(true);
-        });
-
-        JButton buttonLogout = new JButton("Đăng xuất");
-        buttonLogout.addActionListener(e -> {
-            frame.setVisible(false);
-            loginView.setVisible(true);
-        });
-
         labelUser = new JLabel();
         JPanel panelHeader = createHeader("Quản Lý Sinh Viên", labelUser, frame, updatePasswordView, loginView);
 
@@ -133,7 +122,7 @@ public class GiaoVuHomeView {
         panelHeader.add(labelUser);
         panelHeader.add(Box.createRigidArea(new Dimension(8, 0)));
 
-        JButton buttonUpdatePassword = new JButton("Đổi mật khẩu");
+        JButton buttonUpdatePassword = new JButton("Đổi Mật Khẩu");
         buttonUpdatePassword.setBackground(Color.decode("#eeeeee"));
         buttonUpdatePassword.addActionListener(e -> {
             updatePasswordView.setVisible(true);
@@ -146,8 +135,8 @@ public class GiaoVuHomeView {
         buttonLogout.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(
                 null,
-                "Bạn chắn chắn muốn đăng xuất ?",
-                "Đăng xuất",
+                "Bạn chắn chắn muốn Đăng Xuất ?",
+                "Đăng Xuất",
                 JOptionPane.OK_CANCEL_OPTION
             );
 

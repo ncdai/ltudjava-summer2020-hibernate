@@ -106,7 +106,7 @@ public class SinhVienDAO {
         SinhVien sinhVien = SinhVienDAO.login(maSinhVien, matKhauHienTai);
         if (sinhVien == null) return false;
 
-        sinhVien.setMatKhau(matKhauMoi);
+        sinhVien.setMatKhau(BcryptUtils.hashPassword(matKhauMoi));
         return HibernateUtils.updateRow(sinhVien);
     }
 }

@@ -90,6 +90,10 @@ public abstract class UpdatePasswordView {
     }
 
     public void setVisible(boolean visible) {
+        passwordFieldMatKhauHienTai.setText("");
+        passwordFieldMatKhauMoi.setText("");
+        passwordFieldMatKhauHienTai.requestFocus();
+
         frame.setVisible(visible);
     }
 

@@ -37,7 +37,7 @@ public class LoginView {
 
     void createUI() {
         mainFrame = new JFrame();
-        mainFrame.setTitle("Phần Mềm Quản Lý Sinh Viên - by 18120113@hcmus");
+        mainFrame.setTitle("Phần Mềm Quản Lý Sinh Viên");
         mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         mainFrame.setLayout(new BorderLayout());
