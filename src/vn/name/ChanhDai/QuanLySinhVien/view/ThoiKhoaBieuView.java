@@ -25,12 +25,12 @@ public class ThoiKhoaBieuView {
     JFrame mainFrame;
     JTable tableThoiKhoaBieu;
     JComboBox<SimpleComboBoxItem> comboBoxMaLop;
-    FileChooserView fileChooserView;
 
+    FileChooserView fileChooserView;
     JButton buttonImportCSV;
 
     public ThoiKhoaBieuView() {
-        createAndShowUI();
+        createUI();
         createImportCSVUI();
 
         initData();
@@ -164,7 +164,7 @@ public class ThoiKhoaBieuView {
         }
     }
 
-    private void createAndShowUI() {
+    void createUI() {
         mainFrame = new JFrame();
         mainFrame.setTitle("Thời Khóa Biểu");
         mainFrame.setLayout(new BorderLayout());
@@ -242,7 +242,7 @@ public class ThoiKhoaBieuView {
         mainFrame.setLocationRelativeTo(null);
     }
 
-    private void createImportCSVUI() {
+    void createImportCSVUI() {
         fileChooserView = new FileChooserView(buttonImportCSV) {
             @Override
             public Vector<String> getColumnNames() {
@@ -282,6 +282,9 @@ public class ThoiKhoaBieuView {
 
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
-        initData();
+
+        if (visible) {
+            initData();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package vn.name.ChanhDai.QuanLySinhVien.view;
 
-import vn.name.ChanhDai.QuanLySinhVien.dao.LopOfMonDAO;
 import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.entity.LopOfMon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
@@ -10,7 +9,6 @@ import vn.name.ChanhDai.QuanLySinhVien.utils.ViewUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,10 +44,10 @@ public class SinhVienHomeView {
             }
         };
 
-        createAndShowUI();
+        createUI();
     }
 
-    private void createAndShowUI() {
+    private void createUI() {
         frame = new JFrame();
         frame.setTitle("Kết Quả Học Tập");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

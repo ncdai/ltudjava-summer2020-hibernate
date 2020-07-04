@@ -1,7 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien.dao;
 
 import vn.name.ChanhDai.QuanLySinhVien.entity.Admin;
-import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.BcryptUtils;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 

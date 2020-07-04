@@ -11,11 +11,8 @@ import java.util.Vector;
 
 public class SinhVienView {
     JFrame mainFrame;
-
     JTable tableSinhVien;
-
     JComboBox<SimpleComboBoxItem> comboBoxMaLop;
-
     JButton importCSVButton;
 
     FileChooserView fileChooserView;
@@ -31,11 +28,10 @@ public class SinhVienView {
     JRadioButton radioButtonDelete;
 
     public SinhVienView() {
-        createAndShowUI();
+        createUI();
         createImportCSVUI();
 
         new GetComboBoxMaLopThread(comboBoxMaLop, "all").start();
-//        new GetSinhVienThread(tableSinhVien, maLop).start();
     }
 
     static class GetSinhVienThread extends Thread {
@@ -134,7 +130,7 @@ public class SinhVienView {
         }
     }
 
-    public void createSinhVien(SinhVien sinhVien) {
+    void createSinhVien(SinhVien sinhVien) {
         boolean success = SinhVienDAO.create(sinhVien);
         if (success) {
             SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
@@ -148,7 +144,7 @@ public class SinhVienView {
         JOptionPane.showMessageDialog(mainFrame, "Thêm Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void updateSinhVien(SinhVien sinhVien, int row) {
+    void updateSinhVien(SinhVien sinhVien, int row) {
         boolean success = SinhVienDAO.update(sinhVien);
         if (success) {
             SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
@@ -162,7 +158,7 @@ public class SinhVienView {
         JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void deleteSinhVien(SinhVien sinhVien, int row) {
+    void deleteSinhVien(SinhVien sinhVien, int row) {
         int confirm = JOptionPane.showConfirmDialog(
             mainFrame,
             "Bạn chắn chắn muốn xóa Sinh Viên " + sinhVien.getMaSinhVien() + "?",
@@ -188,7 +184,7 @@ public class SinhVienView {
         JOptionPane.showMessageDialog(mainFrame, "Xóa Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
-    public SinhVien getSeletedRow() {
+    SinhVien getSeletedRow() {
         int rowIndex = tableSinhVien.getSelectedRow();
         if (rowIndex == -1) {
             return null;
@@ -198,7 +194,7 @@ public class SinhVienView {
         return TableUtils.parseSinhVien(tableModel.getRow(rowIndex));
     }
 
-    public void setFormValues(String maSinhVien, String hoTen, String gioiTinh, String cmnd, String maLop) {
+    void setFormValues(String maSinhVien, String hoTen, String gioiTinh, String cmnd, String maLop) {
         textFieldMaSinhVien.setText(maSinhVien);
         textFieldHoTen.setText(hoTen);
         comboBoxGioiTinh.setSelectedItem(gioiTinh);
@@ -206,7 +202,7 @@ public class SinhVienView {
         textFieldMaLop.setText(maLop);
     }
 
-    public void setFormValuesBySeletedRow() {
+    void setFormValuesBySeletedRow() {
         SinhVien sinhVien = getSeletedRow();
         if (sinhVien == null) return;
 
@@ -219,7 +215,7 @@ public class SinhVienView {
         );
     }
 
-    public void setFormEnabled(boolean enabled) {
+    void setFormEnabled(boolean enabled) {
         textFieldMaSinhVien.setEnabled(enabled);
         textFieldHoTen.setEnabled(enabled);
         comboBoxGioiTinh.setEnabled(enabled);
@@ -227,50 +223,11 @@ public class SinhVienView {
         textFieldMaLop.setEnabled(enabled);
     }
 
-    public void resetForm() {
+    void resetForm() {
         setFormValues("", "", "", "", "");
     }
 
-    public void createImportCSVUI() {
-        fileChooserView = new FileChooserView(importCSVButton) {
-            @Override
-            public Vector<String> getColumnNames() {
-                Vector<String> columnNames = new Vector<>();
-                columnNames.add("MSSV");
-                columnNames.add("Họ tên");
-                columnNames.add("Giới tính");
-                columnNames.add("CMND");
-                columnNames.add("Lớp");
-                columnNames.add("Trạng thái");
-                return columnNames;
-            }
-
-            @Override
-            public Vector<String> parseTableRow(String[] str) {
-                SinhVien sinhVien = CSVUtils.parseSinhVien(str);
-
-                if (sinhVien != null) {
-                    Vector<String> row = TableUtils.toRow(sinhVien);
-                    row.add("[ Đang chờ ]");
-                    return row;
-                }
-
-                return null;
-            }
-
-            @Override
-            public void startImport(JTable tablePreview) {
-                new ImportCSVThread(tablePreview, tableSinhVien, comboBoxMaLop).start();
-            }
-
-            @Override
-            public void customTable(JTable table) {
-
-            }
-        };
-    }
-
-    public void createAndShowUI() {
+    void createUI() {
         mainFrame = new JFrame();
         mainFrame.setTitle("Sinh Viên");
 
@@ -484,6 +441,45 @@ public class SinhVienView {
 
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
+    }
+
+    void createImportCSVUI() {
+        fileChooserView = new FileChooserView(importCSVButton) {
+            @Override
+            public Vector<String> getColumnNames() {
+                Vector<String> columnNames = new Vector<>();
+                columnNames.add("MSSV");
+                columnNames.add("Họ tên");
+                columnNames.add("Giới tính");
+                columnNames.add("CMND");
+                columnNames.add("Lớp");
+                columnNames.add("Trạng thái");
+                return columnNames;
+            }
+
+            @Override
+            public Vector<String> parseTableRow(String[] str) {
+                SinhVien sinhVien = CSVUtils.parseSinhVien(str);
+
+                if (sinhVien != null) {
+                    Vector<String> row = TableUtils.toRow(sinhVien);
+                    row.add("[ Đang chờ ]");
+                    return row;
+                }
+
+                return null;
+            }
+
+            @Override
+            public void startImport(JTable tablePreview) {
+                new ImportCSVThread(tablePreview, tableSinhVien, comboBoxMaLop).start();
+            }
+
+            @Override
+            public void customTable(JTable table) {
+
+            }
+        };
     }
 
     public void setVisible(boolean visible) {

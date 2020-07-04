@@ -130,7 +130,7 @@ public class GiaoVuHomeView {
         panelHeader.add(buttonUpdatePassword);
         panelHeader.add(Box.createRigidArea(new Dimension(8, 0)));
 
-        JButton buttonLogout = new JButton("Đăng xuất");
+        JButton buttonLogout = new JButton("Đăng Xuất");
         buttonLogout.setBackground(Color.decode("#eeeeee"));
         buttonLogout.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(

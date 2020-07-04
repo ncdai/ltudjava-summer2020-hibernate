@@ -317,7 +317,7 @@ public class LopOfMonView {
         }
     }
 
-    public LopOfMon getSeletedRow() {
+    LopOfMon getSeletedRow() {
         int rowIndex = tableLopOfMon.getSelectedRow();
         if (rowIndex == -1) {
             return null;
@@ -327,7 +327,7 @@ public class LopOfMonView {
         return TableUtils.parseLopOfMon(tableModel.getRow(rowIndex));
     }
 
-    public void setFormValues(
+    void setFormValues(
         String maLop,
         String maMon,
         String maSinhVien,
@@ -434,21 +434,7 @@ public class LopOfMonView {
         mainFrame.setLocationRelativeTo(null);
     }
 
-    public JComboBox<SimpleComboBoxItem> createComboBoxMaLop() {
-        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Lớp"));
-    }
-
-    public JComboBox<SimpleComboBoxItem> createComboBoxMaMon() {
-        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Môn"));
-    }
-
-    public String getComboBoxValue(JComboBox<SimpleComboBoxItem> comboBox) {
-        SimpleComboBoxItem item = (SimpleComboBoxItem) comboBox.getSelectedItem();
-        if (item != null) return item.getValue();
-        return "";
-    }
-
-    private void createImportCSVUI() {
+    void createImportCSVUI() {
         fileChooserView = new FileChooserView(buttonImportCSV) {
             @Override
             public Vector<String> getColumnNames() {
@@ -496,6 +482,20 @@ public class LopOfMonView {
 
             }
         };
+    }
+
+    public JComboBox<SimpleComboBoxItem> createComboBoxMaLop() {
+        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Lớp"));
+    }
+
+    public JComboBox<SimpleComboBoxItem> createComboBoxMaMon() {
+        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Môn"));
+    }
+
+    public String getComboBoxValue(JComboBox<SimpleComboBoxItem> comboBox) {
+        SimpleComboBoxItem item = (SimpleComboBoxItem) comboBox.getSelectedItem();
+        if (item != null) return item.getValue();
+        return "";
     }
 
     JPanel createPanelFilter() {

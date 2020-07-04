@@ -3,7 +3,6 @@ package vn.name.ChanhDai.QuanLySinhVien.dao;
 import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
-import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleComboBoxItem;
 
 import java.util.HashMap;
 import java.util.List;
