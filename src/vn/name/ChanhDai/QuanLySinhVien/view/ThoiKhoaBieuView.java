@@ -33,6 +33,10 @@ public class ThoiKhoaBieuView {
         createAndShowUI();
         createImportCSVUI();
 
+        initData();
+    }
+
+    void initData() {
         new GetThoiKhoaBieuThread(tableThoiKhoaBieu, "all").start();
         new GetComboBoxMaLopThread(comboBoxMaLop).start();
     }
@@ -78,6 +82,10 @@ public class ThoiKhoaBieuView {
         public void run() {
             List<String> list = ThoiKhoaBieuDAO.getLopList();
             SimpleComboBoxModel model = (SimpleComboBoxModel)comboBox.getModel();
+
+            model.removeAllElements();
+            model.addElement(new SimpleComboBoxItem("all", "Tất cả"));
+
             for (String item : list) {
                 boolean check = true;
                 for (int i = 0; i < model.getSize(); ++i) {
@@ -163,10 +171,8 @@ public class ThoiKhoaBieuView {
         labelTitle.setFont(new Font("", Font.BOLD, 24));
         panelPageStart.add(labelTitle);
 
-        Vector<SimpleComboBoxItem> maLopList = new Vector<>();
-        maLopList.add(new SimpleComboBoxItem("all", "Tất cả"));
-        SimpleComboBoxModel maLopModel = new SimpleComboBoxModel(maLopList);
-        comboBoxMaLop = new JComboBox<>(maLopModel);
+        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất cả"));
+        comboBoxMaLop.setPreferredSize(new Dimension(144, 24));
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
@@ -178,17 +184,36 @@ public class ThoiKhoaBieuView {
             }
         });
 
-        JPanel panelCenter = new JPanel(new BorderLayout(8, 8));
+        JPanel panelCenter = new JPanel(new BorderLayout());
         JPanel panelCenterHeader = new JPanel();
 
         panelCenterHeader.setLayout(new BoxLayout(panelCenterHeader, BoxLayout.X_AXIS));
         panelCenterHeader.setBackground(Color.WHITE);
-        panelCenterHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
-        panelCenterHeader.add(new JLabel("Xem theo lớp"));
+        panelCenterHeader.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        panelCenterHeader.add(new JLabel("Xem TKB Lớp"));
         panelCenterHeader.add(Box.createRigidArea(new Dimension(8, 0)));
-        panelCenterHeader.add(comboBoxMaLop);
+
+        JPanel comboBoxMaLopWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        comboBoxMaLopWrapper.setBackground(Color.WHITE);
+        comboBoxMaLopWrapper.add(comboBoxMaLop);
+        panelCenterHeader.add(comboBoxMaLopWrapper);
+
         panelCenterHeader.add(Box.createHorizontalGlue());
+
+        JButton buttonSaveCSVTemplateFile = new JButton("Lưu File CSV Mẫu");
+        buttonSaveCSVTemplateFile.setBackground(Color.decode("#eeeeee"));
+        buttonSaveCSVTemplateFile.setPreferredSize(new Dimension(144, 24));
+        buttonSaveCSVTemplateFile.addActionListener(e -> {
+            String header = "maLop,maMon,tenMon,phongHoc";
+            String content = "18HCB,CTT001,Lập trình ứng dụng Java,C31";
+            CSVUtils.saveCSVTemplateFile(header, content);
+        });
+
+        panelCenterHeader.add(buttonSaveCSVTemplateFile);
+        panelCenterHeader.add(Box.createRigidArea(new Dimension(8, 0)));
+
         buttonImportCSV = new JButton("Nhập File CSV");
+        buttonImportCSV.setPreferredSize(new Dimension(144, 24));
         panelCenterHeader.add(buttonImportCSV);
 
         Vector<String> columnNames = new Vector<>();
@@ -197,11 +222,12 @@ public class ThoiKhoaBieuView {
         columnNames.add("Tên môn");
         columnNames.add("Phòng học");
 
-        tableThoiKhoaBieu = new JTable(new SimpleTableModel(columnNames, null));
-        tableThoiKhoaBieu.setFillsViewportHeight(true);
+        tableThoiKhoaBieu = ViewUtils.createSimpleTable(new SimpleTableModel(columnNames, null));
 
         JScrollPane scrollPaneCenter = new JScrollPane(tableThoiKhoaBieu);
-        scrollPaneCenter.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        scrollPaneCenter.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
+        scrollPaneCenter.setPreferredSize(new Dimension(720, scrollPaneCenter.getPreferredSize().height));
+        scrollPaneCenter.setBackground(Color.WHITE);
 
         panelCenter.add(panelCenterHeader, BorderLayout.PAGE_START);
         panelCenter.add(scrollPaneCenter, BorderLayout.CENTER);
@@ -244,10 +270,16 @@ public class ThoiKhoaBieuView {
                 System.out.println("Start Import");
                 new ImportCSVThread(tablePreview, tableThoiKhoaBieu, comboBoxMaLop).start();
             }
+
+            @Override
+            public void customTable(JTable table) {
+
+            }
         };
     }
 
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
+        initData();
     }
 }

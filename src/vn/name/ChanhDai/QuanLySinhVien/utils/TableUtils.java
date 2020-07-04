@@ -5,6 +5,9 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
+import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.util.Vector;
 
 /**
@@ -30,11 +33,11 @@ public class TableUtils {
         // maLop, maMon, tenMon, phongHoc
 
         Mon mon = new Mon();
-        mon.setMaMon(row.get(0));
-        mon.setTenMon(row.get(1));
+        mon.setMaMon(row.get(1));
+        mon.setTenMon(row.get(2));
 
         ThoiKhoaBieu tkb = new ThoiKhoaBieu();
-        tkb.setMaLop(row.get(2));
+        tkb.setMaLop(row.get(0));
         tkb.setMon(mon);
         tkb.setPhongHoc(row.get(3));
 

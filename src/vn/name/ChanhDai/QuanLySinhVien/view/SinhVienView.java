@@ -5,6 +5,7 @@ import vn.name.ChanhDai.QuanLySinhVien.dao.SinhVienDAO;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 
 import javax.swing.*;
+import javax.swing.text.View;
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;
@@ -42,6 +43,10 @@ public class SinhVienView {
         createAndShowUI();
         createImportCSVUI();
 
+        initData(maLop);
+    }
+
+    void initData(String maLop) {
         new GetComboBoxMaLopThread(comboBoxMaLop, maLop).start();
         new GetSinhVienThread(tableSinhVien, maLop).start();
     }
@@ -87,6 +92,10 @@ public class SinhVienView {
         public void run() {
             List<String> list = SinhVienDAO.getLopList();
             SimpleComboBoxModel model = (SimpleComboBoxModel) comboBox.getModel();
+
+            model.removeAllElements();
+            model.addElement(new SimpleComboBoxItem("all", "Tất cả"));
+
             for (String item : list) {
                 model.addElement(new SimpleComboBoxItem(item, item));
             }
@@ -260,6 +269,11 @@ public class SinhVienView {
                 new ImportCSVThread(tablePreview, tableSinhVien).start();
                 System.out.println("Start Import");
             }
+
+            @Override
+            public void customTable(JTable table) {
+
+            }
         };
     }
 
@@ -277,10 +291,8 @@ public class SinhVienView {
 
         JLabel labelFilter = new JLabel("Xem lớp");
 
-        Vector<SimpleComboBoxItem> maLopList = new Vector<>();
-        maLopList.add(new SimpleComboBoxItem("all", "Tất cả"));
-
-        comboBoxMaLop = new JComboBox<>(new SimpleComboBoxModel(maLopList));
+        comboBoxMaLop = ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Tất cả"));
+        comboBoxMaLop.setPreferredSize(new Dimension(144, 24));
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
@@ -292,23 +304,40 @@ public class SinhVienView {
             }
         });
 
+        JButton buttonSaveCSVTemplateFile = new JButton("Lưu File CSV Mẫu");
+        buttonSaveCSVTemplateFile.setPreferredSize(new Dimension(144, 24));
+        buttonSaveCSVTemplateFile.setBackground(Color.decode("#eeeeee"));
+        buttonSaveCSVTemplateFile.addActionListener(e -> {
+            String header = "maLop,maSinhVien,hoTen,gioiTinh,cmnd";
+            String content = "17HCB,1742001,Nguyễn Văn A,Nam,123456789";
+            CSVUtils.saveCSVTemplateFile(header, content);
+        });
+
         importCSVButton = new JButton("Nhập File CSV");
-        importCSVButton.setPreferredSize(new Dimension(120, 24));
+        importCSVButton.setPreferredSize(new Dimension(144, 24));
 
         JPanel topMenuPanel = new JPanel();
-        topMenuPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        topMenuPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         topMenuPanel.setBackground(Color.WHITE);
         BoxLayout topMenuPanelLayout = new BoxLayout(topMenuPanel, BoxLayout.X_AXIS);
         topMenuPanel.setLayout(topMenuPanelLayout);
         topMenuPanel.add(labelFilter);
         topMenuPanel.add(Box.createRigidArea(new Dimension(8, 0)));
-        topMenuPanel.add(comboBoxMaLop);
+
+        JPanel comboBoxMaLopWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        comboBoxMaLopWrapper.setBackground(Color.WHITE);
+        comboBoxMaLopWrapper.add(comboBoxMaLop);
+
+        topMenuPanel.add(comboBoxMaLopWrapper);
+
         topMenuPanel.add(Box.createHorizontalGlue());
+        topMenuPanel.add(buttonSaveCSVTemplateFile);
+        topMenuPanel.add(Box.createRigidArea(new Dimension(8, 0)));
         topMenuPanel.add(importCSVButton);
 
         JPanel centerPanel = new JPanel();
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
-        centerPanel.setLayout(new BorderLayout(0, 8));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 8));
+        centerPanel.setLayout(new BorderLayout());
         centerPanel.add(topMenuPanel, BorderLayout.PAGE_START);
 
         Vector<String> columnNames = new Vector<>();
@@ -318,11 +347,7 @@ public class SinhVienView {
         columnNames.add("CMND");
         columnNames.add("Lớp");
 
-        tableSinhVien = new JTable(new SimpleTableModel(columnNames, null));
-        tableSinhVien.setFillsViewportHeight(true);
-
-        tableSinhVien.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableSinhVien.setDefaultEditor(Object.class, null);
+        tableSinhVien = ViewUtils.createSimpleTable(new SimpleTableModel(columnNames, null));
 
         ListSelectionModel selectionModel = tableSinhVien.getSelectionModel();
         selectionModel.addListSelectionListener(e -> {
@@ -334,7 +359,9 @@ public class SinhVienView {
         });
 
         JScrollPane scrollPane = new JScrollPane(tableSinhVien);
-        scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        scrollPane.setBackground(Color.WHITE);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
+        scrollPane.setPreferredSize(new Dimension(720, scrollPane.getPreferredSize().height));
         centerPanel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel sidebarPanel = new JPanel();
@@ -344,18 +371,10 @@ public class SinhVienView {
         JPanel formPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
-        form.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        form.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         formPanel.add(form);
 
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.LINE_START;
-
-        radioButtonUpdate = new JRadioButton("Cập nhật");
-        radioButtonUpdate.setPreferredSize(new Dimension(96, 24));
-        radioButtonUpdate.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonUpdate.setBackground(Color.decode("#f5f5f5"));
+        radioButtonUpdate = ViewUtils.createRadioButton("Cập nhật", 96, 24, SwingConstants.CENTER);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -367,10 +386,7 @@ public class SinhVienView {
             textFieldMaSinhVien.setEnabled(false);
         });
 
-        radioButtonCreate = new JRadioButton("Thêm");
-        radioButtonCreate.setPreferredSize(new Dimension(96, 24));
-        radioButtonCreate.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonCreate.setBackground(Color.decode("#f5f5f5"));
+        radioButtonCreate = ViewUtils.createRadioButton("Thêm SV", 96, 24, SwingConstants.CENTER);
         radioButtonCreate.addActionListener(e -> {
             System.out.println("radioButtonCreate " + radioButtonCreate.isSelected());
 
@@ -378,10 +394,7 @@ public class SinhVienView {
             setFormEnabled(true);
         });
 
-        radioButtonDelete = new JRadioButton("Xóa");
-        radioButtonDelete.setPreferredSize(new Dimension(96, 24));
-        radioButtonDelete.setHorizontalAlignment(SwingConstants.CENTER);
-        radioButtonDelete.setBackground(Color.decode("#f5f5f5"));
+        radioButtonDelete = ViewUtils.createRadioButton("Xóa SV", 96, 24, SwingConstants.CENTER);
         radioButtonDelete.addActionListener(e -> {
             System.out.println("radioButtonDelete " + radioButtonDelete.isSelected());
 
@@ -395,82 +408,36 @@ public class SinhVienView {
         buttonGroup.add(radioButtonCreate);
         buttonGroup.add(radioButtonDelete);
 
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.insets = new Insets(0, 0, 4, 0);
-        form.add(radioButtonUpdate, c);
+        form.add(radioButtonUpdate, ViewUtils.createFormConstraints(0, 0, 1, 0, 0, 4, 0));
+        form.add(radioButtonCreate, ViewUtils.createFormConstraints(1, 0, 1, 0, 0, 4, 0));
+        form.add(radioButtonDelete, ViewUtils.createFormConstraints(2, 0, 1, 0, 0, 4, 0));
 
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        form.add(radioButtonCreate, c);
-
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        form.add(radioButtonDelete, c);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.ipadx = 0;
-        c.insets = new Insets(4, 0, 4, 0);
-        c.gridwidth = 1;
-        form.add(new JLabel("MSSV"), c);
-
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 2;
+        form.add(new JLabel("MSSV"), ViewUtils.createFormConstraints(0, 1, 1, 4, 0, 4, 0));
         textFieldMaSinhVien = new JTextField();
         textFieldMaSinhVien.setEnabled(false);
-        form.add(textFieldMaSinhVien, c);
+        form.add(textFieldMaSinhVien, ViewUtils.createFormConstraints(1, 1, 2, 4, 0, 4, 0));
 
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        form.add(new JLabel("Họ và tên"), c);
-
-        c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 2;
+        form.add(new JLabel("Họ và tên"), ViewUtils.createFormConstraints(0, 2, 1, 4, 0, 4, 0));
         textFieldHoTen = new JTextField();
-        form.add(textFieldHoTen, c);
+        form.add(textFieldHoTen, ViewUtils.createFormConstraints(1, 2, 2, 4, 0, 4, 0));
 
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        form.add(new JLabel("Giới tính"), c);
-
+        form.add(new JLabel("Giới tính"), ViewUtils.createFormConstraints(0, 3, 1, 4, 0, 4, 0));
         String[] gioiTinhList = {"Nam", "Nữ", "Khác"};
         comboBoxGioiTinh = new JComboBox<>(gioiTinhList);
-        c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 2;
-        form.add(comboBoxGioiTinh, c);
+        form.add(comboBoxGioiTinh, ViewUtils.createFormConstraints(1, 3, 2, 4, 0, 4, 0));
 
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        form.add(new JLabel("CMND"), c);
-
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 2;
+        form.add(new JLabel("CMND"), ViewUtils.createFormConstraints(0, 4, 1, 4, 0, 4, 0));
         textFieldCMND = new JTextField();
-        form.add(textFieldCMND, c);
+        form.add(textFieldCMND, ViewUtils.createFormConstraints(1, 4, 2, 4, 0, 4, 0));
 
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 1;
-        form.add(new JLabel("Mã lớp"), c);
 
-        c.gridx = 1;
-        c.gridy = 5;
-        c.gridwidth = 2;
+        form.add(new JLabel("Mã lớp"), ViewUtils.createFormConstraints(0, 5, 1, 4, 0, 4, 0));
         textFieldMaLop = new JTextField();
-        form.add(textFieldMaLop, c);
+        form.add(textFieldMaLop, ViewUtils.createFormConstraints(1, 5, 2, 4, 0, 4, 0));
 
         JButton buttonSubmit = new JButton("Thực hiện");
+        form.add(buttonSubmit, ViewUtils.createFormConstraints(0, 6, 3, 4, 0, 0, 0));
+
         buttonSubmit.addActionListener(e -> {
             String maSinhVien = textFieldMaSinhVien.getText();
             String hoTen = textFieldHoTen.getText();
@@ -514,12 +481,6 @@ public class SinhVienView {
 
         });
 
-        c.gridx = 0;
-        c.gridy = 6;
-        c.gridwidth = 3;
-        c.insets = new Insets(4, 0, 0, 0);
-        form.add(buttonSubmit, c);
-
         sidebarPanel.add(formPanel);
 
         Container pane = mainFrame.getContentPane();
@@ -533,5 +494,6 @@ public class SinhVienView {
 
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
+        initData("all");
     }
 }

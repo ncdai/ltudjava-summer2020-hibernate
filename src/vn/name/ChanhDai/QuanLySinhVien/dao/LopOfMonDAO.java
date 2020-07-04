@@ -78,6 +78,16 @@ public class LopOfMonDAO {
         return HibernateUtils.queryList(LopOfMon.class, hql, params);
     }
 
+    public static List<LopOfMon> getListByMaSinhVien(String maSinhVien) {
+        // language=HQL
+        String hql = "select lom from LopOfMon lom where lom.sinhVien.maSinhVien = :maSinhVien";
+
+        Map<String, String> params = new HashMap<>();
+        params.put("maSinhVien", maSinhVien);
+
+        return HibernateUtils.queryList(LopOfMon.class, hql, params);
+    }
+
     public static boolean update(LopOfMon lopOfMon) {
         if (LopOfMonDAO.getSingle(lopOfMon.getId()) == null) {
             // Khong ton tai LopOfMon

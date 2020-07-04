@@ -1,9 +1,6 @@
 package vn.name.ChanhDai.QuanLySinhVien;
 
-import vn.name.ChanhDai.QuanLySinhVien.view.HomeView;
-import vn.name.ChanhDai.QuanLySinhVien.view.LopOfMonView;
-import vn.name.ChanhDai.QuanLySinhVien.view.SinhVienView;
-import vn.name.ChanhDai.QuanLySinhVien.view.ThoiKhoaBieuView;
+import vn.name.ChanhDai.QuanLySinhVien.view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,13 +13,12 @@ public class Main {
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // handle exception
+            System.out.println("Error!");
         }
 
         EventQueue.invokeLater(() -> {
-//                new HomeView();
-//            new SinhVienView();
-//            new ThoiKhoaBieuView().setVisible(true);
-            new LopOfMonView().setVisible(true);
+            LoginView loginView = new LoginView();
+            loginView.setVisible(true);
         });
     }
 }

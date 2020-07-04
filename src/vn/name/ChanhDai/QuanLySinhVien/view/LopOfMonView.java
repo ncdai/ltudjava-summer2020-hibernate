@@ -49,6 +49,10 @@ public class LopOfMonView {
         createUI();
         createImportCSVUI();
 
+        initData();
+    }
+
+    void initData() {
         new GetLopOfMonThread(tableLopOfMon, "all", "all").start();
 
         new GetComboBoxMaLopThread(comboBoxMaLopFilter).start();
@@ -75,7 +79,7 @@ public class LopOfMonView {
 
             if (maLop.equals("all") && maMon.equals("all")) {
                 lopOfMonList = LopOfMonDAO.getList();
-                System.out.println("Get by ...");
+                System.out.println("Get by All");
             } else if (maLop.equals("all")) {
                 lopOfMonList = LopOfMonDAO.getListByMaMon(maMon);
                 System.out.println("Get by Mon(" + maMon + ")");
@@ -106,7 +110,11 @@ public class LopOfMonView {
         @Override
         public void run() {
             List<String> lopList = SinhVienDAO.getLopList();
+
             SimpleComboBoxModel model = (SimpleComboBoxModel) comboBox.getModel();
+            model.removeAllElements();
+            model.addElement(new SimpleComboBoxItem("all", "Chọn Lớp"));
+
             for (String maLop : lopList) {
                 model.addElement(new SimpleComboBoxItem(maLop, maLop));
             }
@@ -159,8 +167,6 @@ public class LopOfMonView {
         public void run() {
             boolean success = LopOfMonDAO.updateByMaSinhVienAndMaMon(lopOfMon);
             if (success) {
-//                System.out.println("After : " + lopOfMon.toString()); // DEBUG
-
                 SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
                 tableModel.updateRow(rowIndex, TableUtils.toRow(lopOfMon));
                 tableModel.fireTableDataChanged();
@@ -237,8 +243,8 @@ public class LopOfMonView {
         public int findIndex(String maSinhVien, String maMon) {
             SimpleTableModel tableTargetModel = (SimpleTableModel) tableTarget.getModel();
             for (int index = 0; index < tableTargetModel.getRowCount(); ++index) {
-                String _maSinhVien = (String) tableTargetModel.getValueAt(index, 4);
-                String _maMon = (String) tableTargetModel.getValueAt(index, 2);
+                String _maSinhVien = (String) tableTargetModel.getValueAt(index, 3);
+                String _maMon = (String) tableTargetModel.getValueAt(index, 1);
 
                 if (_maSinhVien.equals(maSinhVien) && _maMon.equals(maMon)) {
                     return index;
@@ -388,14 +394,13 @@ public class LopOfMonView {
         JPanel panelFilter = createPanelFilter();
         JPanel panelMain = new JPanel();
         panelMain.setLayout(new BorderLayout());
-        panelMain.setBackground(Color.WHITE);
-        panelMain.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        panelMain.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
 
         // Frame -> Main -> Table
         createTable();
         JScrollPane scrollPaneTable = new JScrollPane(tableLopOfMon);
         scrollPaneTable.setBackground(Color.WHITE);
-        scrollPaneTable.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        scrollPaneTable.setBorder(BorderFactory.createEmptyBorder(0, 8, 8, 8));
         scrollPaneTable.setPreferredSize(new Dimension(880, scrollPaneTable.getPreferredSize().height));
 
         panelMain.add(panelFilter, BorderLayout.PAGE_START);
@@ -404,7 +409,7 @@ public class LopOfMonView {
         // Frame -> Sidebar
         JPanel panelSidebar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         panelSidebar.setBackground(Color.WHITE);
-        panelSidebar.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        panelSidebar.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         JPanel form = createPanelForm();
         panelSidebar.add(form);
@@ -417,62 +422,18 @@ public class LopOfMonView {
         mainFrame.setLocationRelativeTo(null);
     }
 
-    public JComboBox<SimpleComboBoxItem> createComboBox(SimpleComboBoxItem placeholder) {
-        Vector<SimpleComboBoxItem> defaultList = new Vector<>();
-        defaultList.add(placeholder);
-
-        JComboBox<SimpleComboBoxItem> comboBox = new JComboBox<>(new SimpleComboBoxModel(defaultList));
-        comboBox.setPrototypeDisplayValue(placeholder);
-
-        return comboBox;
-    }
-
     public JComboBox<SimpleComboBoxItem> createComboBoxMaLop() {
-        return createComboBox(new SimpleComboBoxItem("all", "Chọn Lớp"));
+        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Lớp"));
     }
 
     public JComboBox<SimpleComboBoxItem> createComboBoxMaMon() {
-        return createComboBox(new SimpleComboBoxItem("all", "Chọn Môn"));
-    }
-
-    public JRadioButton createRadioButton(String label, int width, int height, int alignment) {
-        JRadioButton radioButton = new JRadioButton(label);
-        radioButton.setPreferredSize(new Dimension(width, height));
-        radioButton.setBackground(Color.decode("#f5f5f5"));
-        radioButton.setHorizontalAlignment(alignment);
-
-        return radioButton;
-    }
-
-    public GridBagConstraints createFormConstraints(int x, int y, int width, int paddingTop, int paddingRight, int paddingBottom, int paddingLeft) {
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = x;
-        c.gridy = y;
-        c.gridwidth = width;
-        c.insets = new Insets(paddingTop, paddingLeft, paddingBottom, paddingRight);
-
-        return c;
-    }
-
-    public GridBagConstraints createFormConstraints(int x, int y, int width) {
-        return createFormConstraints(x, y, width, 0, 0, 0, 0);
-    }
-
-    public GridBagConstraints createFormConstraints(int x, int y, int width, int paddingHorizontal, int paddingVertical) {
-        return createFormConstraints(x, y, width, paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical);
+        return ViewUtils.createComboBox(new SimpleComboBoxItem("all", "Chọn Môn"));
     }
 
     public String getComboBoxValue(JComboBox<SimpleComboBoxItem> comboBox) {
         SimpleComboBoxItem item = (SimpleComboBoxItem) comboBox.getSelectedItem();
         if (item != null) return item.getValue();
         return "";
-    }
-
-    public void setTableColumnWidth(JTable table, int columnIndex, int width) {
-        table.getColumnModel().getColumn(columnIndex).setMinWidth(width);
-        table.getColumnModel().getColumn(columnIndex).setMaxWidth(width);
-        table.getColumnModel().getColumn(columnIndex).setWidth(width);
     }
 
     private void createImportCSVUI() {
@@ -518,6 +479,11 @@ public class LopOfMonView {
                 System.out.println("Start Import");
                 new ImportCSVThread(tablePreview, tableLopOfMon).start();
             }
+
+            @Override
+            public void customTable(JTable table) {
+
+            }
         };
     }
 
@@ -525,10 +491,12 @@ public class LopOfMonView {
         JPanel panelFilter = new JPanel();
         panelFilter.setLayout(new BoxLayout(panelFilter, BoxLayout.X_AXIS));
         panelFilter.setBackground(Color.WHITE);
-        panelFilter.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        panelFilter.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
         comboBoxMaMonFilter = createComboBoxMaMon();
+        comboBoxMaMonFilter.setPreferredSize(new Dimension(160, 24));
         comboBoxMaLopFilter = createComboBoxMaLop();
+        comboBoxMaLopFilter.setPreferredSize(new Dimension(160, 24));
 
         comboBoxMaLopFilter.addActionListener(e -> {
             SimpleComboBoxItem maLopItem = (SimpleComboBoxItem) comboBoxMaLopFilter.getSelectedItem();
@@ -540,6 +508,7 @@ public class LopOfMonView {
         });
 
         JButton buttonGet = new JButton("Xem Danh Sách");
+        buttonGet.setPreferredSize(new Dimension(160, 24));
         buttonGet.addActionListener(e -> {
             SimpleComboBoxItem maLopItem = (SimpleComboBoxItem) comboBoxMaLopFilter.getSelectedItem();
             SimpleComboBoxItem maMonItem = (SimpleComboBoxItem) comboBoxMaMonFilter.getSelectedItem();
@@ -567,6 +536,7 @@ public class LopOfMonView {
         });
 
         JButton buttonXemThongKe = new JButton("Xem Thống Kê");
+        buttonXemThongKe.setPreferredSize(new Dimension(160, 24));
         buttonXemThongKe.addActionListener(e -> {
             String maLop = getComboBoxValue(comboBoxMaLopFilter);
             String maMon = getComboBoxValue(comboBoxMaMonFilter);
@@ -578,53 +548,71 @@ public class LopOfMonView {
             }
         });
 
-        panelFilter.add(comboBoxMaLopFilter);
+        JPanel temp = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        temp.setBackground(Color.WHITE);
+
+        JPanel temp2 = new JPanel(new GridBagLayout());
+        temp2.setBackground(Color.WHITE);
+
+        temp2.add(comboBoxMaLopFilter, ViewUtils.createFormConstraints(0, 0, 1, 0, 8, 8, 0));
+        temp2.add(comboBoxMaMonFilter, ViewUtils.createFormConstraints(1, 0, 1, 0, 8, 8, 0));
+
+        temp2.add(buttonGet, ViewUtils.createFormConstraints(2, 0, 1, 0, 0, 8, 0));
+        temp2.add(buttonXemThongKe, ViewUtils.createFormConstraints(2, 1, 1));
+
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.decode("#eeeeee"));
+        panel.setPreferredSize(new Dimension(100, 24));
+
+        JLabel label = new JLabel("Thống kê Số Lượng / Phần Trăm Qua / Rớt Môn");
+        panel.add(label);
+        temp2.add(panel, ViewUtils.createFormConstraints(0, 1, 2, 0, 8, 0, 0));
+
+        temp.add(temp2);
+
+        panelFilter.add(temp);
         panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
-        panelFilter.add(comboBoxMaMonFilter);
-        panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
-        panelFilter.add(buttonGet);
-        panelFilter.add(Box.createRigidArea(new Dimension(8, 0)));
-        panelFilter.add(buttonXemThongKe);
         panelFilter.add(Box.createHorizontalGlue());
 
+        JPanel panel1 = new JPanel(new GridBagLayout());
+        panel1.setBackground(Color.WHITE);
+
+        JPanel panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        panel2.setBackground(Color.WHITE);
+        panel2.add(panel1);
+
         buttonImportCSV = new JButton("Nhập Bảng Điểm CSV");
-        panelFilter.add(buttonImportCSV);
+        JButton buttonSaveCSVTemplateFile = new JButton("Lưu File CSV Mẫu");
+        buttonSaveCSVTemplateFile.setBackground(Color.decode("#eeeeee"));
+        buttonSaveCSVTemplateFile.addActionListener(e -> {
+            String header = "maLop,maMon,maSinhVien,hoTen,diemGK,diemCK,diemKhac,diemTong";
+            String content = "18HCB,CTT001,1842001,Nguyen Van A,10,10,10,10";
+            CSVUtils.saveCSVTemplateFile(header, content);
+        });
+
+        panel1.add(buttonImportCSV, ViewUtils.createFormConstraints(0, 0, 1, 0, 0, 8, 0));
+        panel1.add(buttonSaveCSVTemplateFile, ViewUtils.createFormConstraints(0, 1, 1));
+
+        panelFilter.add(panel2);
 
         return panelFilter;
     }
 
     void createTable() {
-        Vector<String> columnNames = new Vector<>();
-        columnNames.add("Mã Lớp");
-        columnNames.add("Mã Môn");
-        columnNames.add("Tên Môn");
+        Vector<String> columnNames = LopOfMonView.getTableColumnNames();
 
-        columnNames.add("MSSV");
-        columnNames.add("Họ và Tên");
-        columnNames.add("Giới Tính");
+        tableLopOfMon = ViewUtils.createSimpleTable(new SimpleTableModel(columnNames, null));
 
-        columnNames.add("Điểm GK");
-        columnNames.add("Điểm CK");
-        columnNames.add("Điểm Khác");
+        ViewUtils.setTableColumnWidth(tableLopOfMon, 0, 64);
+        ViewUtils.setTableColumnWidth(tableLopOfMon, 1, 64);
 
-        columnNames.add("Điểm Tổng");
-        columnNames.add("Đậu / Rớt");
+        ViewUtils.setTableColumnWidth(tableLopOfMon, 3, 64);
+        ViewUtils.setTableColumnWidth(tableLopOfMon, 4, 112);
+        ViewUtils.setTableColumnWidth(tableLopOfMon, 5, 64);
 
-        tableLopOfMon = new JTable(new SimpleTableModel(columnNames, null));
-        tableLopOfMon.setFillsViewportHeight(true);
-
-        setTableColumnWidth(tableLopOfMon, 0, 64);
-        setTableColumnWidth(tableLopOfMon, 1, 64);
-
-        setTableColumnWidth(tableLopOfMon, 3, 64);
-        setTableColumnWidth(tableLopOfMon, 4, 112);
-        setTableColumnWidth(tableLopOfMon, 5, 64);
-
-        for (int i = 6; i <= 9; ++i) {
-            setTableColumnWidth(tableLopOfMon, i, 80);
+        for (int i = 6; i <= 10; ++i) {
+            ViewUtils.setTableColumnWidth(tableLopOfMon, i, 80);
         }
-
-        setTableColumnWidth(tableLopOfMon, 10, 72);
 
         ListSelectionModel selectionModel = tableLopOfMon.getSelectionModel();
         selectionModel.addListSelectionListener(e -> {
@@ -640,12 +628,11 @@ public class LopOfMonView {
         JPanel form = new JPanel();
         form.setLayout(new GridBagLayout());
         form.setBackground(Color.WHITE);
-        form.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        radioButtonUpdate = createRadioButton("Sửa Điểm", 96, 24, SwingConstants.CENTER);
+        radioButtonUpdate = ViewUtils.createRadioButton("Sửa Điểm", 96, 24, SwingConstants.CENTER);
         radioButtonUpdate.setSelected(true);
         radioButtonUpdate.addActionListener(e -> {
             System.out.println("radioButtonUpdate " + radioButtonUpdate.isSelected());
@@ -654,14 +641,14 @@ public class LopOfMonView {
             setDiemInfoFormEnabled(true);
         });
 
-        radioButtonDelete = createRadioButton("Xóa SV", 96, 24, SwingConstants.CENTER);
+        radioButtonDelete = ViewUtils.createRadioButton("Xóa SV", 96, 24, SwingConstants.CENTER);
         radioButtonDelete.addActionListener(e -> {
             System.out.println("radioButtonDelete " + radioButtonDelete.isSelected());
             setFormValuesBySeletedRow();
             setFormEnabled(false);
         });
 
-        radioButtonCreate = createRadioButton("Thêm SV", 96, 24, SwingConstants.CENTER);
+        radioButtonCreate = ViewUtils.createRadioButton("Thêm SV", 96, 24, SwingConstants.CENTER);
         radioButtonCreate.addActionListener(e -> {
             System.out.println("radioButtonCreate " + radioButtonCreate.isSelected());
             resetForm();
@@ -676,46 +663,46 @@ public class LopOfMonView {
         comboBoxMaLopForm = createComboBoxMaLop();
         comboBoxMaMonForm = createComboBoxMaMon();
 
-        form.add(radioButtonUpdate, createFormConstraints(0, 0, 1));
-        form.add(radioButtonDelete, createFormConstraints(1, 0, 1));
-        form.add(radioButtonCreate, createFormConstraints(2, 0, 1));
+        form.add(radioButtonUpdate, ViewUtils.createFormConstraints(0, 0, 1));
+        form.add(radioButtonDelete, ViewUtils.createFormConstraints(1, 0, 1));
+        form.add(radioButtonCreate, ViewUtils.createFormConstraints(2, 0, 1));
 
-        form.add(new JLabel("Lớp"), createFormConstraints(0, 1, 1, 8, 8, 8, 0));
+        form.add(new JLabel("Lớp"), ViewUtils.createFormConstraints(0, 1, 1, 8, 8, 8, 0));
         comboBoxMaLopForm.setEnabled(false);
-        form.add(comboBoxMaLopForm, createFormConstraints(1, 1, 2, 8, 0));
+        form.add(comboBoxMaLopForm, ViewUtils.createFormConstraints(1, 1, 2, 8, 0));
 
-        form.add(new JLabel("Môn"), createFormConstraints(0, 2, 1));
+        form.add(new JLabel("Môn"), ViewUtils.createFormConstraints(0, 2, 1));
         comboBoxMaMonForm.setEnabled(false);
-        form.add(comboBoxMaMonForm, createFormConstraints(1, 2, 2));
+        form.add(comboBoxMaMonForm, ViewUtils.createFormConstraints(1, 2, 2));
 
-        form.add(new JLabel("MSSV"), createFormConstraints(0, 3, 1, 8, 0));
+        form.add(new JLabel("MSSV"), ViewUtils.createFormConstraints(0, 3, 1, 8, 0));
         textFieldMaSinhVien = new JTextField();
         textFieldMaSinhVien.setEnabled(false);
-        form.add(textFieldMaSinhVien, createFormConstraints(1, 3, 2, 8, 0));
+        form.add(textFieldMaSinhVien, ViewUtils.createFormConstraints(1, 3, 2, 8, 0));
 
-        form.add(new JLabel("Họ Tên"), createFormConstraints(0, 4, 1));
+        form.add(new JLabel("Họ Tên"), ViewUtils.createFormConstraints(0, 4, 1));
         textFieldHoTen = new JTextField();
         textFieldHoTen.setEnabled(false);
-        form.add(textFieldHoTen, createFormConstraints(1, 4, 2));
+        form.add(textFieldHoTen, ViewUtils.createFormConstraints(1, 4, 2));
 
-        form.add(new JLabel("Điểm GK"), createFormConstraints(0, 5, 1, 8, 0));
+        form.add(new JLabel("Điểm GK"), ViewUtils.createFormConstraints(0, 5, 1, 8, 0));
         spinnerDiemGK = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
-        form.add(spinnerDiemGK, createFormConstraints(1, 5, 2, 8, 0));
+        form.add(spinnerDiemGK, ViewUtils.createFormConstraints(1, 5, 2, 8, 0));
 
-        form.add(new JLabel("Điểm CK"), createFormConstraints(0, 6, 1));
+        form.add(new JLabel("Điểm CK"), ViewUtils.createFormConstraints(0, 6, 1));
         spinnerDiemCK = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
-        form.add(spinnerDiemCK, createFormConstraints(1, 6, 2));
+        form.add(spinnerDiemCK, ViewUtils.createFormConstraints(1, 6, 2));
 
-        form.add(new JLabel("Điểm Khác"), createFormConstraints(0, 7, 1, 8, 0));
+        form.add(new JLabel("Điểm Khác"), ViewUtils.createFormConstraints(0, 7, 1, 8, 0));
         spinnerDiemKhac = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
-        form.add(spinnerDiemKhac, createFormConstraints(1, 7, 2, 8, 0));
+        form.add(spinnerDiemKhac, ViewUtils.createFormConstraints(1, 7, 2, 8, 0));
 
-        form.add(new JLabel("Điểm Tổng"), createFormConstraints(0, 8, 1, 0, 8, 0, 0));
+        form.add(new JLabel("Điểm Tổng"), ViewUtils.createFormConstraints(0, 8, 1, 0, 8, 0, 0));
         spinnerDiemTong = new JSpinner(new SpinnerNumberModel(0, 0, 10, 0.1));
-        form.add(spinnerDiemTong, createFormConstraints(1, 8, 2));
+        form.add(spinnerDiemTong, ViewUtils.createFormConstraints(1, 8, 2));
 
         buttonSubmit = new JButton("Thực Hiện");
-        form.add(buttonSubmit, createFormConstraints(0, 9, 3, 8, 0, 0, 0));
+        form.add(buttonSubmit, ViewUtils.createFormConstraints(0, 9, 3, 8, 0, 0, 0));
 
         buttonSubmit.addActionListener(e -> {
             String maLop = getComboBoxValue(comboBoxMaLopForm);
@@ -777,7 +764,28 @@ public class LopOfMonView {
         return form;
     }
 
+    public static Vector<String> getTableColumnNames() {
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("Mã Lớp");
+        columnNames.add("Mã Môn");
+        columnNames.add("Tên Môn");
+
+        columnNames.add("MSSV");
+        columnNames.add("Họ và Tên");
+        columnNames.add("Giới Tính");
+
+        columnNames.add("Điểm GK");
+        columnNames.add("Điểm CK");
+        columnNames.add("Điểm Khác");
+
+        columnNames.add("Điểm Tổng");
+        columnNames.add("Đậu / Rớt");
+
+        return columnNames;
+    }
+
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
+        initData();
     }
 }

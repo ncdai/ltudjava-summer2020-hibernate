@@ -5,9 +5,9 @@ import vn.name.ChanhDai.QuanLySinhVien.entity.Mon;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.entity.ThoiKhoaBieu;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,5 +102,27 @@ public class CSVUtils {
         lopOfMon.getSinhVien().setHoTen(hoTen);
 
         return lopOfMon;
+    }
+
+    public static void saveCSVTemplateFile(String header, String contentExample) {
+        JFileChooser chooser = new JFileChooser();
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-Separated Values (CSV)", "csv");
+        chooser.setFileFilter(filter);
+
+        int returnVal = chooser.showSaveDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+
+            String filePath = file.getAbsolutePath();
+            filePath = filePath.endsWith(".csv") ? filePath : filePath + ".csv";
+            try (FileWriter fw = new FileWriter(filePath)) {
+                fw.write(header);
+                fw.write("\n");
+                fw.write(contentExample);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
     }
 }

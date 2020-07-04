@@ -2,6 +2,7 @@ package vn.name.ChanhDai.QuanLySinhVien.view;
 
 import vn.name.ChanhDai.QuanLySinhVien.utils.CSVUtils;
 import vn.name.ChanhDai.QuanLySinhVien.utils.SimpleTableModel;
+import vn.name.ChanhDai.QuanLySinhVien.utils.ViewUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -63,7 +64,7 @@ public abstract class FileChooserView {
         fileChooser.setDialogTitle("Chọn File CSV");
         fileChooser.setCurrentDirectory(new File("./data")); // DEBUG
 
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("File CSV", "csv");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-Separated Values (CSV)", "csv");
         fileChooser.setFileFilter(filter);
 
         importCSVFrame = new JFrame();
@@ -75,21 +76,26 @@ public abstract class FileChooserView {
         JPanel panelHeader = new JPanel();
         panelHeader.setLayout(new BoxLayout(panelHeader, BoxLayout.X_AXIS));
         panelHeader.setBackground(Color.WHITE);
-        panelHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        panelHeader.setBorder(BorderFactory.createLineBorder(Color.WHITE, 16));
 
-        JButton buttonChooseAnotherFile = new JButton("Chọn File khác");
-        JButton buttonImport = new JButton("Bắt đầu nhập");
+        JButton buttonChooseAnotherFile = new JButton("Chọn File Khác");
+        buttonChooseAnotherFile.setBackground(Color.decode("#eeeeee"));
+        JButton buttonImport = new JButton("Bắt Đầu Nhập");
 
-        panelHeader.add(new JLabel("Xem trước"));
+        JLabel labelTitle = new JLabel("Trình Nhập File CSV");
+        labelTitle.setFont(new Font("", Font.BOLD, 24));
+        panelHeader.add(labelTitle);
         panelHeader.add(Box.createHorizontalGlue());
         panelHeader.add(buttonChooseAnotherFile);
         panelHeader.add(Box.createRigidArea(new Dimension(8,0)));
         panelHeader.add(buttonImport);
 
-        tablePreview = new JTable(new SimpleTableModel(getColumnNames(), null));
-        tablePreview.setFillsViewportHeight(true);
+        tablePreview = ViewUtils.createSimpleTable(new SimpleTableModel(getColumnNames(), null));
+        customTable(tablePreview);
+
         JScrollPane scrollPane = new JScrollPane(tablePreview);
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.WHITE, 8));
+        scrollPane.setPreferredSize(new Dimension(720, scrollPane.getPreferredSize().height));
 
         Container contentPance = importCSVFrame.getContentPane();
         contentPance.add(panelHeader, BorderLayout.PAGE_START);
@@ -106,6 +112,8 @@ public abstract class FileChooserView {
     public abstract Vector<String> getColumnNames();
 
     public abstract Vector<String> parseTableRow(String[] str);
+
+    public abstract void customTable(JTable table);
 
     public abstract void startImport(JTable tablePreview);
 }

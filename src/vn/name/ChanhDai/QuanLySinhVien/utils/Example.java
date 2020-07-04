@@ -274,12 +274,12 @@ public class Example {
         String maSinhVien = "1742001";
         String matKhau = "1742001";
 
-        boolean success = SinhVienDAO.login(maSinhVien, matKhau);
-        if (success) {
-            System.out.println("loginAsSinhVienExample : success");
-        } else {
-            System.out.println("loginAsSinhVienExample : error");
-        }
+//        boolean success = SinhVienDAO.login(maSinhVien, matKhau);
+//        if (success) {
+//            System.out.println("loginAsSinhVienExample : success");
+//        } else {
+//            System.out.println("loginAsSinhVienExample : error");
+//        }
     }
 
     public static void updateSinhVienExample() {

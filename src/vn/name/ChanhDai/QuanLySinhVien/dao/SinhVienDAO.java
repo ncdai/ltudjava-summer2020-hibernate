@@ -2,6 +2,7 @@ package vn.name.ChanhDai.QuanLySinhVien.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import vn.name.ChanhDai.QuanLySinhVien.entity.Admin;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
@@ -77,7 +78,15 @@ public class SinhVienDAO {
         return HibernateUtils.queryList(SinhVien.class, hql, params);
     }
 
-    public static boolean login(String maSinhVien, String matKhau) {
+    public static List<String> getLopList() {
+        // language=HQL
+        String hql = "select distinct sv.maLop from SinhVien sv";
+        Map<String, String> params = new HashMap<>();
+
+        return HibernateUtils.queryList(String.class, hql, params);
+    }
+
+    public static SinhVien login(String maSinhVien, String matKhau) {
         // language=HQL
         String hql = "select sv from SinhVien sv where sv.maSinhVien = :maSinhVien and sv.matKhau = :matKhau";
 
@@ -85,14 +94,16 @@ public class SinhVienDAO {
         params.put("maSinhVien", maSinhVien);
         params.put("matKhau", matKhau);
 
-        return HibernateUtils.querySingle(SinhVien.class, hql, params) != null;
+        return HibernateUtils.querySingle(SinhVien.class, hql, params);
     }
 
-    public static List<String> getLopList() {
-        // language=HQL
-        String hql = "select distinct sv.maLop from SinhVien sv";
-        Map<String, String> params = new HashMap<>();
+    public static boolean updatePassword(String maSinhVien, String matKhauHienTai, String matKhauMoi) {
+        SinhVien sinhVien = SinhVienDAO.login(maSinhVien, matKhauHienTai);
+        if (sinhVien == null) {
+            return false;
+        }
 
-        return HibernateUtils.queryList(String.class, hql, params);
+        sinhVien.setMatKhau(matKhauMoi);
+        return HibernateUtils.updateRow(sinhVien);
     }
 }
