@@ -2,6 +2,7 @@ package vn.name.ChanhDai.QuanLySinhVien.dao;
 
 import vn.name.ChanhDai.QuanLySinhVien.entity.Admin;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
+import vn.name.ChanhDai.QuanLySinhVien.utils.BcryptUtils;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
 import java.util.HashMap;
@@ -17,22 +18,25 @@ import java.util.Map;
 public class AdminDAO {
     public static Admin login(String tenDangNhap, String matKhau) {
         // language=HQL
-        String hql = "select ad from Admin ad where ad.tenDangNhap = :tenDangNhap and ad.matKhau = :matKhau";
+        String hql = "select ad from Admin ad where ad.tenDangNhap = :tenDangNhap";
 
         Map<String, String> params = new HashMap<>();
         params.put("tenDangNhap", tenDangNhap);
-        params.put("matKhau", matKhau);
 
-        return HibernateUtils.querySingle(Admin.class, hql, params);
+        Admin admin = HibernateUtils.querySingle(Admin.class, hql, params);
+
+        if (admin == null) return null;
+
+        if (BcryptUtils.checkPassword(admin.getMatKhau(), matKhau)) return admin;
+
+        return null;
     }
 
     public static boolean updatePassword(String tenDangNhap, String matKhauHienTai, String matKhauMoi) {
         Admin user = AdminDAO.login(tenDangNhap, matKhauHienTai);
-        if (user == null) {
-            return false;
-        }
+        if (user == null) return false;
 
-        user.setMatKhau(matKhauMoi);
+        user.setMatKhau(BcryptUtils.hashPassword(matKhauMoi));
         return HibernateUtils.updateRow(user);
     }
 }

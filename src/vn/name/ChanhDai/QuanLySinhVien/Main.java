@@ -12,7 +12,7 @@ public class Main {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            // handle exception
+            // handle Exception
             System.out.println("Error!");
         }
 

@@ -2,8 +2,8 @@ package vn.name.ChanhDai.QuanLySinhVien.dao;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import vn.name.ChanhDai.QuanLySinhVien.entity.Admin;
 import vn.name.ChanhDai.QuanLySinhVien.entity.SinhVien;
+import vn.name.ChanhDai.QuanLySinhVien.utils.BcryptUtils;
 import vn.name.ChanhDai.QuanLySinhVien.utils.HibernateUtils;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class SinhVienDAO {
         }
 
         // Mat khau mac dinh la MSSV
-        sinhVien.setMatKhau(sinhVien.getMaSinhVien());
+        sinhVien.setMatKhau(BcryptUtils.hashPassword(sinhVien.getMaSinhVien()));
         return HibernateUtils.insertRow(sinhVien);
     }
 
@@ -88,20 +88,23 @@ public class SinhVienDAO {
 
     public static SinhVien login(String maSinhVien, String matKhau) {
         // language=HQL
-        String hql = "select sv from SinhVien sv where sv.maSinhVien = :maSinhVien and sv.matKhau = :matKhau";
+        String hql = "select sv from SinhVien sv where sv.maSinhVien = :maSinhVien";
 
         Map<String, String> params = new HashMap<>();
         params.put("maSinhVien", maSinhVien);
-        params.put("matKhau", matKhau);
 
-        return HibernateUtils.querySingle(SinhVien.class, hql, params);
+        SinhVien sinhVien = HibernateUtils.querySingle(SinhVien.class, hql, params);
+
+        if (sinhVien == null) return null;
+
+        if (BcryptUtils.checkPassword(sinhVien.getMatKhau(), matKhau)) return sinhVien;
+
+        return null;
     }
 
     public static boolean updatePassword(String maSinhVien, String matKhauHienTai, String matKhauMoi) {
         SinhVien sinhVien = SinhVienDAO.login(maSinhVien, matKhauHienTai);
-        if (sinhVien == null) {
-            return false;
-        }
+        if (sinhVien == null) return false;
 
         sinhVien.setMatKhau(matKhauMoi);
         return HibernateUtils.updateRow(sinhVien);
