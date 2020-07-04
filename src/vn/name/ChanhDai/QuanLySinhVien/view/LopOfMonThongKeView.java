@@ -52,11 +52,15 @@ public class LopOfMonThongKeView {
             if (statistic != null) {
                 int soLuongSVQuaMon = statistic.get("soLuongSVQuaMon");
                 int soLuongSVRotMon = statistic.get("soLuongSVRotMon");
+                int soLuongKhongCoDiem = statistic.get("soLuongSVKhongDiem");
 
                 chart.getSeriesMap().clear();
 
                 chart.addSeries("Qua Môn (" + soLuongSVQuaMon + " Sinh Viên)", soLuongSVQuaMon);
                 chart.addSeries("Rớt Môn (" + soLuongSVRotMon + " Sinh Viên)", soLuongSVRotMon);
+                if (soLuongKhongCoDiem > 0) {
+                    chart.addSeries("Không Có Điểm (" + soLuongKhongCoDiem + " Sinh Viên)", soLuongKhongCoDiem);
+                }
 
                 panelChart.repaint();
             }

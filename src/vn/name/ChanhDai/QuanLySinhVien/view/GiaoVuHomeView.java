@@ -113,6 +113,7 @@ public class GiaoVuHomeView {
         button.setBackground(background);
         button.setForeground(Color.WHITE);
         button.setFont(new Font("", Font.BOLD, 14));
+        button.setFocusPainted(false);
 
         return button;
     }

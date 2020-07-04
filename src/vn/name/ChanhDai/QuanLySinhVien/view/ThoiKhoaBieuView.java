@@ -56,8 +56,10 @@ public class ThoiKhoaBieuView {
 
             if (maLop == null || maLop.equals("all")) {
                 thoiKhoaBieuList = ThoiKhoaBieuDAO.getList();
+                System.out.println("ThoiKhoaBieuView -> GetThoiKhoaBieuThread -> Get All");
             } else {
                 thoiKhoaBieuList = ThoiKhoaBieuDAO.getListByMaLop(maLop);
+                System.out.println("ThoiKhoaBieuView -> GetThoiKhoaBieuThread -> Get by Lop(" + maLop+ ")");
             }
 
             SimpleTableModel tableModel = (SimpleTableModel)table.getModel();
@@ -178,10 +180,8 @@ public class ThoiKhoaBieuView {
         comboBoxMaLop.addActionListener(e -> {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
-                String label = item.getLabel();
                 String maLop = item.getValue();
-
-                System.out.println("[label=" + label + "][value=" + maLop + "]");
+                System.out.println("ThoiKhoaBieuView -> comboBoxMaLop -> " + maLop);
                 new GetThoiKhoaBieuThread(tableThoiKhoaBieu, maLop).start();
             }
         });

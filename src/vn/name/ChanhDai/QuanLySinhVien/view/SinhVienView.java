@@ -31,23 +31,11 @@ public class SinhVienView {
     JRadioButton radioButtonDelete;
 
     public SinhVienView() {
-        constructor("all");
-    }
-
-    public SinhVienView(String maLop) {
-        constructor(maLop);
-    }
-
-    void constructor(String maLop) {
         createAndShowUI();
         createImportCSVUI();
 
-        initData(maLop);
-    }
-
-    void initData(String maLop) {
-        new GetComboBoxMaLopThread(comboBoxMaLop, maLop).start();
-        new GetSinhVienThread(tableSinhVien, maLop).start();
+        new GetComboBoxMaLopThread(comboBoxMaLop, "all").start();
+//        new GetSinhVienThread(tableSinhVien, maLop).start();
     }
 
     static class GetSinhVienThread extends Thread {
@@ -63,8 +51,10 @@ public class SinhVienView {
             List<SinhVien> list;
             if (maLop.equals("all")) {
                 list = SinhVienDAO.getList();
+                System.out.println("SinhVienView -> GetSinhVienThread -> Get All");
             } else {
                 list = SinhVienDAO.getListByMaLop(maLop);
+                System.out.println("SinhVienView -> GetSinhVienThread -> Get by Lop(" + maLop + ")");
             }
 
             SimpleTableModel model = (SimpleTableModel) table.getModel();
@@ -98,6 +88,7 @@ public class SinhVienView {
             for (String item : list) {
                 model.addElement(new SimpleComboBoxItem(item, item));
             }
+
             model.setSelectedItem(defaultValue);
         }
     }
@@ -301,6 +292,7 @@ public class SinhVienView {
             SimpleComboBoxItem item = (SimpleComboBoxItem) comboBoxMaLop.getSelectedItem();
             if (item != null) {
                 String maLop = item.getValue();
+                System.out.println("StudentView -> comboBoxMaLop -> " + maLop);
                 new GetSinhVienThread(tableSinhVien, maLop).start();
             }
         });
@@ -497,8 +489,14 @@ public class SinhVienView {
 
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
+    }
+
+    public void setVisible(boolean visible, String maLop) {
+        setVisible(visible);
+
         if (visible) {
-            initData("all");
+            SimpleComboBoxModel model = (SimpleComboBoxModel)comboBoxMaLop.getModel();
+            model.setSelectedItem(maLop);
         }
     }
 }

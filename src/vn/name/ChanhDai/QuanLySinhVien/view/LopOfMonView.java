@@ -24,6 +24,7 @@ public class LopOfMonView {
     JTable tableLopOfMon;
 
     FileChooserView fileChooserView;
+    SinhVienView sinhVienView;
 
     JComboBox<SimpleComboBoxItem> comboBoxMaLopFilter;
     JComboBox<SimpleComboBoxItem> comboBoxMaMonFilter;
@@ -48,6 +49,8 @@ public class LopOfMonView {
     public LopOfMonView() {
         createUI();
         createImportCSVUI();
+
+        sinhVienView = new SinhVienView();
 
         initData();
     }
@@ -79,13 +82,13 @@ public class LopOfMonView {
 
             if (maLop.equals("all") && maMon.equals("all")) {
                 lopOfMonList = LopOfMonDAO.getList();
-                System.out.println("Get by All");
+                System.out.println("LopOfMonView -> GetLopOfMonThread -> Get All");
             } else if (maLop.equals("all")) {
                 lopOfMonList = LopOfMonDAO.getListByMaMon(maMon);
-                System.out.println("Get by Mon(" + maMon + ")");
+                System.out.println("LopOfMonView -> GetLopOfMonThread -> Get by Mon(" + maMon + ")");
             } else {
                 lopOfMonList = LopOfMonDAO.getListByMaLopAndMaMon(maLop, maMon);
-                System.out.println("Get by Lop&Mon(" + maLop + "-" + maMon + ")");
+                System.out.println("LopOfMonView -> GetLopOfMonThread -> Get by Lop&Mon(" + maLop + "-" + maMon + ")");
             }
 
             SimpleTableModel tableModel = (SimpleTableModel) table.getModel();
@@ -217,6 +220,14 @@ public class LopOfMonView {
 
         @Override
         public void run() {
+            // Khong luu diem khi Them sinh vien moi vao lop
+            lopOfMon.setDiemGK(null);
+            lopOfMon.setDiemCK(null);
+            lopOfMon.setDiemKhac(null);
+            lopOfMon.setDiemTong(null);
+
+            System.out.println(lopOfMon.toString());
+
             boolean success = LopOfMonDAO.create(lopOfMon);
             if (success) {
                 SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
@@ -502,7 +513,7 @@ public class LopOfMonView {
             SimpleComboBoxItem maLopItem = (SimpleComboBoxItem) comboBoxMaLopFilter.getSelectedItem();
             if (maLopItem != null) {
                 String maLop = maLopItem.getValue();
-                System.out.println(maLop);
+                System.out.println("LopOfMonView -> comboBoxMaLopFilter -> " + maLop);
                 new GetComboBoxMaMonThread(comboBoxMaMonFilter, maLop).start();
             }
         });
@@ -514,22 +525,19 @@ public class LopOfMonView {
             SimpleComboBoxItem maMonItem = (SimpleComboBoxItem) comboBoxMaMonFilter.getSelectedItem();
 
             if (maLopItem != null && maMonItem != null) {
-                String maLopItemLabel = maLopItem.getLabel();
                 String maLopItemValue = maLopItem.getValue();
-
-                String maMonItemLabel = maMonItem.getLabel();
                 String maMonItemValue = maMonItem.getValue();
 
                 if (!maLopItemValue.equals("all") && maMonItemValue.equals("all")) {
-                    System.out.println("Xem Danh Sach Lop");
-                    new SinhVienView(maLopItemValue).setVisible(true);
+                    System.out.println("LopOfMonView -> GET -> sinhVienView.setVisible(true, " + maLopItemValue + ")");
+                    sinhVienView.setVisible(true, maLopItemValue);
                     return;
                 }
 
-                System.out.println("[label=" + maLopItemLabel + "][value=" + maLopItemValue + "]");
-                System.out.println("[label=" + maMonItemLabel + "][value=" + maMonItemValue + "]");
+                System.out.println("LopOfMonView -> GET -> " + maLopItemValue + "-" + maMonItemValue + ")");
 
                 new GetLopOfMonThread(tableLopOfMon, maLopItemValue, maMonItemValue).start();
+
             } else {
                 JOptionPane.showMessageDialog(null, "Bạn chưa chọn Lớp và Môn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             }
@@ -787,5 +795,7 @@ public class LopOfMonView {
     public void setVisible(boolean visible) {
         mainFrame.setVisible(visible);
         initData();
+
+        sinhVienView = new SinhVienView();
     }
 }

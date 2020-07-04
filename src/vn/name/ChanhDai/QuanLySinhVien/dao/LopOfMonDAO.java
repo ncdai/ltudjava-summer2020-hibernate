@@ -139,7 +139,7 @@ public class LopOfMonDAO {
 
     public static Map<String, Integer> getThongKe(String maLop, String maMon) {
         // language=HQL
-        String hql = "select count(*) as soLuongSV, sum(case when lom.diemTong >= 5 then 1 else 0 end) as soLuongSVQuaMon from LopOfMon lom where lom.maLop = :maLop and lom.mon.maMon = :maMon";
+        String hql = "select count(*) as soLuongSV, sum(case when (lom.diemTong is not null) and (lom.diemTong >= 5) then 1 else 0 end) as soLuongSVQuaMon, sum(case when (lom.diemTong is not null) and (lom.diemTong < 5) then 1 else 0 end) as soLuongRotMon from LopOfMon lom where lom.maLop = :maLop and lom.mon.maMon = :maMon";
 
         Map<String, String> params = new HashMap<>();
         params.put("maLop", maLop);
@@ -152,11 +152,13 @@ public class LopOfMonDAO {
         if (data != null) {
             int soLuongSV = Integer.parseInt(data[0].toString());
             int soLuongSVQuaMon = Integer.parseInt(data[1].toString());
-            int soLuongSVRotMon = soLuongSV - soLuongSVQuaMon;
+            int soLuongSVRotMon = Integer.parseInt(data[2].toString());
+            int soLuongSVKhongDiem = soLuongSV - (soLuongSVQuaMon + soLuongSVRotMon);
 
             res.put("soLuongSV", soLuongSV);
             res.put("soLuongSVQuaMon", soLuongSVQuaMon);
             res.put("soLuongSVRotMon", soLuongSVRotMon);
+            res.put("soLuongSVKhongDiem", soLuongSVKhongDiem);
 
             return res;
         }
