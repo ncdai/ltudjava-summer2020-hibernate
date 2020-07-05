@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="QuanLySinhVien:jar">
+  <artifact type="jar" build-on-make="true" name="QuanLySinhVien:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/QuanLySinhVien_jar</output-path>
     <root id="archive" name="QuanLySinhVien.jar">
       <element id="module-output" name="QuanLySinhVien" />

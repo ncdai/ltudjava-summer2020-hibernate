@@ -1,10 +1,13 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
+import vn.name.ChanhDai.QuanLySinhVien.Main;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.net.URL;
 import java.util.Vector;
 
 /**
@@ -44,7 +47,13 @@ public class ViewUtils {
     }
 
     public static ImageIcon createImageIcon(String path) {
-        return new ImageIcon(path);
+        java.net.URL imgURL = ViewUtils.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file : " + path);
+            return null;
+        }
     }
 
     public static void setTableColumnWidth(JTable table, int columnIndex, int width) {
@@ -97,7 +106,7 @@ public class ViewUtils {
     }
 
     public static JButton createButtonBack(JFrame frame, String text, Color background) {
-        JButton buttonBack = new JButton(text, ViewUtils.createImageIcon("assets/images/back.png"));
+        JButton buttonBack = new JButton(text, ViewUtils.createImageIcon("images/back.png"));
         buttonBack.setBorderPainted(false);
         buttonBack.setBorder(null);
         buttonBack.setBackground(background);

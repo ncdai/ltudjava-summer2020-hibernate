@@ -87,17 +87,17 @@ public class GiaoVuHomeView {
         menuPanel.setLayout(menuPanelLayout);
         menuPanel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
-        JButton sinhVienListButton = createButtonFeature("Sinh Viên", "assets/images/user-graduate-solid.png", Color.decode("#ff4757"));
+        JButton sinhVienListButton = createButtonFeature("Sinh Viên", "images/user-graduate-solid.png", Color.decode("#ff4757"));
         sinhVienListButton.addActionListener(e -> {
             sinhVienView.setVisible(true);
         });
 
-        JButton thoiKhoaBieuButton = createButtonFeature("Thời Khóa Biểu", "assets/images/calendar-alt-solid.png", Color.decode("#2ed573"));
+        JButton thoiKhoaBieuButton = createButtonFeature("Thời Khóa Biểu", "images/calendar-alt-solid.png", Color.decode("#2ed573"));
         thoiKhoaBieuButton.addActionListener(e -> {
             thoiKhoaBieuView.setVisible(true);
         });
 
-        JButton lopOfMonButton = createButtonFeature("Danh Sách Lớp / Bảng Điểm", "assets/images/users-class.png", Color.decode("#0984e3"));
+        JButton lopOfMonButton = createButtonFeature("Danh Sách Lớp / Bảng Điểm", "images/users-class.png", Color.decode("#0984e3"));
         lopOfMonButton.addActionListener(e -> {
             lopOfMonView.setVisible(true);
         });
