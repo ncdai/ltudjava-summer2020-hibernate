@@ -108,15 +108,19 @@ public class ThoiKhoaBieuView {
         JTable tableDraft;
         JTable tableTarget;
         JComboBox<SimpleComboBoxItem> comboBoxMaLop;
+        JButton buttonImport;
 
-        ImportCSVThread(JTable tableDraft, JTable tableTarget, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
+        ImportCSVThread(JTable tableDraft, JTable tableTarget, JButton buttonImport, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
             this.tableDraft = tableDraft;
             this.tableTarget = tableTarget;
             this.comboBoxMaLop = comboBoxMaLop;
+            this.buttonImport = buttonImport;
         }
 
         @Override
         public void run() {
+            buttonImport.setEnabled(false);
+
             SimpleTableModel tableDraftModel = (SimpleTableModel)tableDraft.getModel();
             SimpleTableModel tableTargetModel = (SimpleTableModel)tableTarget.getModel();
 
@@ -157,6 +161,7 @@ public class ThoiKhoaBieuView {
                 tableTargetModel.fireTableDataChanged();
             }
 
+            buttonImport.setEnabled(true);
             JOptionPane.showMessageDialog(null, "Đã nhập Thời Khóa Biểu thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
 
             // Cap nhat lai du lieu comboBoxMaLop
@@ -269,8 +274,8 @@ public class ThoiKhoaBieuView {
             }
 
             @Override
-            public void startImport(JTable tablePreview) {
-                new ImportCSVThread(tablePreview, tableThoiKhoaBieu, comboBoxMaLop).start();
+            public void startImport(JTable tablePreview, JButton buttonImport) {
+                new ImportCSVThread(tablePreview, tableThoiKhoaBieu, buttonImport, comboBoxMaLop).start();
             }
 
             @Override

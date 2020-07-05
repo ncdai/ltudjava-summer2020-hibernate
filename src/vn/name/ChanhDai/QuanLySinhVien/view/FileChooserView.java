@@ -62,7 +62,7 @@ public abstract class FileChooserView {
     public void createUI() {
         fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn File CSV");
-        fileChooser.setCurrentDirectory(new File("./data")); // DEBUG
+//        fileChooser.setCurrentDirectory(new File("./data")); // DEBUG
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-Separated Values (CSV)", "csv");
         fileChooser.setFileFilter(filter);
@@ -114,7 +114,7 @@ public abstract class FileChooserView {
 
 //            if (confirm != JOptionPane.YES_OPTION) return;
 
-            startImport(tablePreview);
+            startImport(tablePreview, buttonImport);
         });
 
         importCSVFrame.pack();
@@ -127,5 +127,5 @@ public abstract class FileChooserView {
 
     public abstract void customTable(JTable table);
 
-    public abstract void startImport(JTable tablePreview);
+    public abstract void startImport(JTable tablePreview, JButton buttonImport);
 }

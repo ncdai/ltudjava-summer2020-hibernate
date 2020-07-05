@@ -28,19 +28,45 @@ public class SinhVienHomeView {
 
     JTable tableDiem;
 
+    static class UpdatePasswordThread extends Thread {
+        UpdatePasswordView updatePasswordView;
+        JButton buttonSubmit;
+
+        String tenDangNhap;
+        String matKhauHienTai;
+        String matKhauMoi;
+
+        public UpdatePasswordThread(UpdatePasswordView updatePasswordView, JButton buttonSubmit, String tenDangNhap, String matKhauHienTai, String matKhauMoi) {
+            this.updatePasswordView = updatePasswordView;
+            this.buttonSubmit = buttonSubmit;
+            this.tenDangNhap = tenDangNhap;
+            this.matKhauHienTai = matKhauHienTai;
+            this.matKhauMoi = matKhauMoi;
+        }
+
+        @Override
+        public void run() {
+            buttonSubmit.setEnabled(false);
+
+            boolean success = SinhVienDAO.updatePassword(tenDangNhap, matKhauHienTai, matKhauMoi);
+            buttonSubmit.setEnabled(true);
+
+            if (success) {
+                JOptionPane.showMessageDialog(null, "Đổi mật khẩu thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                updatePasswordView.setVisible(false);
+                return;
+            }
+
+            JOptionPane.showMessageDialog(null, "Mật khẩu hiện tại không chính xác!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     public SinhVienHomeView(LoginView loginView) {
         this.loginView = loginView;
         this.updatePasswordView = new UpdatePasswordView() {
             @Override
             public void submit(String matKhauHienTai, String matKhauMoi) {
-                boolean success = SinhVienDAO.updatePassword(sinhVien.getMaSinhVien(), matKhauHienTai, matKhauMoi);
-                if (success) {
-                    JOptionPane.showMessageDialog(null, "Đổi mật khẩu thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    this.setVisible(false);
-                    return;
-                }
-
-                JOptionPane.showMessageDialog(null, "Mật khẩu hiện tại không chính xác!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                new UpdatePasswordThread(this, buttonSubmit, sinhVien.getMaSinhVien(), matKhauHienTai, matKhauMoi).start();
             }
         };
 

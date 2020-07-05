@@ -157,18 +157,24 @@ public class LopOfMonView {
 
     static class UpdateThread extends Thread {
         JTable tableTarget;
+        JButton buttonSubmit;
         LopOfMon lopOfMon;
         int rowIndex;
 
-        public UpdateThread(JTable tableTarget, LopOfMon lopOfMon, int rowIndex) {
+        public UpdateThread(JTable tableTarget, JButton buttonSubmit, LopOfMon lopOfMon, int rowIndex) {
             this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
             this.lopOfMon = lopOfMon;
             this.rowIndex = rowIndex;
         }
 
         @Override
         public void run() {
+            buttonSubmit.setEnabled(false);
+
             boolean success = LopOfMonDAO.updateByMaSinhVienAndMaMon(lopOfMon);
+            buttonSubmit.setEnabled(true);
+
             if (success) {
                 SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
                 tableModel.updateRow(rowIndex, TableUtils.toRow(lopOfMon));
@@ -184,18 +190,25 @@ public class LopOfMonView {
 
     static class DeleteThread extends Thread {
         JTable tableTarget;
+        JButton buttonSubmit;
+
         LopOfMon lopOfMon;
         int rowIndex;
 
-        public DeleteThread(JTable tableTarget, LopOfMon lopOfMon, int rowIndex) {
+        public DeleteThread(JTable tableTarget, JButton buttonSubmit, LopOfMon lopOfMon, int rowIndex) {
             this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
             this.lopOfMon = lopOfMon;
             this.rowIndex = rowIndex;
         }
 
         @Override
         public void run() {
+            buttonSubmit.setEnabled(false);
+
             boolean success = LopOfMonDAO.deleteByMaSinhVienAndMaMon(lopOfMon);
+            buttonSubmit.setEnabled(true);
+
             if (success) {
                 SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
                 tableModel.removeRow(rowIndex);
@@ -211,15 +224,19 @@ public class LopOfMonView {
 
     static class CreateThread extends Thread {
         JTable tableTarget;
+        JButton buttonSubmit;
         LopOfMon lopOfMon;
 
-        public CreateThread(JTable tableTarget, LopOfMon lopOfMon) {
+        public CreateThread(JTable tableTarget, JButton buttonSubmit, LopOfMon lopOfMon) {
             this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
             this.lopOfMon = lopOfMon;
         }
 
         @Override
         public void run() {
+            buttonSubmit.setEnabled(false);
+
             // Khong luu diem khi Them sinh vien moi vao lop
             lopOfMon.setDiemGK(null);
             lopOfMon.setDiemCK(null);
@@ -229,6 +246,8 @@ public class LopOfMonView {
             System.out.println(lopOfMon.toString());
 
             boolean success = LopOfMonDAO.create(lopOfMon);
+            buttonSubmit.setEnabled(true);
+
             if (success) {
                 SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
                 tableModel.addRow(TableUtils.toRow(lopOfMon));
@@ -245,10 +264,12 @@ public class LopOfMonView {
     static class ImportCSVThread extends Thread {
         JTable tableDraft;
         JTable tableTarget;
+        JButton buttonImport;
 
-        ImportCSVThread(JTable tableDraft, JTable tableTarget) {
+        ImportCSVThread(JTable tableDraft, JTable tableTarget, JButton buttonImport) {
             this.tableDraft = tableDraft;
             this.tableTarget = tableTarget;
+            this.buttonImport = buttonImport;
         }
 
         public int findIndex(String maSinhVien, String maMon) {
@@ -266,6 +287,8 @@ public class LopOfMonView {
 
         @Override
         public void run() {
+            buttonImport.setEnabled(false);
+
             SimpleTableModel tableDraftModel = (SimpleTableModel) tableDraft.getModel();
             SimpleTableModel tableTargetModel = (SimpleTableModel) tableTarget.getModel();
 
@@ -313,6 +336,7 @@ public class LopOfMonView {
                 tableTargetModel.fireTableDataChanged();
             }
 
+            buttonImport.setEnabled(true);
             JOptionPane.showMessageDialog(null, "Đã nhập Bảng Điểm thành công (" + actualImportQuantity + "/" + desiredImportQuantity + ")", "Kết quả", JOptionPane.INFORMATION_MESSAGE);
         }
     }
@@ -473,8 +497,8 @@ public class LopOfMonView {
             }
 
             @Override
-            public void startImport(JTable tablePreview) {
-                new ImportCSVThread(tablePreview, tableLopOfMon).start();
+            public void startImport(JTable tablePreview, JButton buttonImport) {
+                new ImportCSVThread(tablePreview, tableLopOfMon, buttonImport).start();
             }
 
             @Override
@@ -744,7 +768,7 @@ public class LopOfMonView {
             if (radioButtonUpdate.isSelected()) {
 
                 System.out.println("Update");
-                new UpdateThread(tableLopOfMon, lopOfMon, rowSelectedIndex).start();
+                new UpdateThread(tableLopOfMon, buttonSubmit, lopOfMon, rowSelectedIndex).start();
 
             } else if (radioButtonDelete.isSelected()) {
 
@@ -758,13 +782,13 @@ public class LopOfMonView {
                 );
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    new DeleteThread(tableLopOfMon, lopOfMon, rowSelectedIndex).start();
+                    new DeleteThread(tableLopOfMon, buttonSubmit, lopOfMon, rowSelectedIndex).start();
                 }
 
             } else {
 
                 System.out.println("Create");
-                new CreateThread(tableLopOfMon, lopOfMon).start();
+                new CreateThread(tableLopOfMon, buttonSubmit, lopOfMon).start();
 
             }
         });

@@ -35,6 +35,80 @@ public class LoginView {
         sinhVienHomeView = new SinhVienHomeView(this);
     }
 
+    static class LoginAdminThread extends Thread {
+        JFrame loginFrame;
+        JButton buttonLogin;
+        GiaoVuHomeView giaoVuHomeView;
+        JPasswordField passwordField;
+
+        String tenDangNhap;
+        String matKhau;
+
+        public LoginAdminThread(JFrame loginFreame, JButton buttonLogin, GiaoVuHomeView giaoVuHomeView, JPasswordField passwordField, String tenDangNhap, String matKhau) {
+            this.loginFrame = loginFreame;
+            this.buttonLogin = buttonLogin;
+            this.giaoVuHomeView = giaoVuHomeView;
+            this.passwordField = passwordField;
+            this.tenDangNhap = tenDangNhap;
+            this.matKhau = matKhau;
+        }
+
+        @Override
+        public void run() {
+            buttonLogin.setEnabled(false);
+
+            Admin admin = AdminDAO.login(tenDangNhap, matKhau);
+            buttonLogin.setEnabled(true);
+
+            if (admin != null) {
+                loginFrame.setVisible(false);
+                giaoVuHomeView.setAdmin(admin);
+                giaoVuHomeView.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Sai Tên Đăng Nhập hoặc Mật Khẩu", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                passwordField.setText("");
+                passwordField.requestFocus();
+            }
+        }
+    }
+
+    static class LoginSinhVienThread extends Thread {
+        JFrame loginFrame;
+        JButton buttonLogin;
+        SinhVienHomeView sinhVienHomeView;
+        JPasswordField passwordField;
+
+        String tenDangNhap;
+        String matKhau;
+
+        public LoginSinhVienThread(JFrame loginFreame, JButton buttonLogin, SinhVienHomeView sinhVienHomeView, JPasswordField passwordField, String tenDangNhap, String matKhau) {
+            this.loginFrame = loginFreame;
+            this.buttonLogin = buttonLogin;
+            this.sinhVienHomeView = sinhVienHomeView;
+            this.passwordField = passwordField;
+            this.tenDangNhap = tenDangNhap;
+            this.matKhau = matKhau;
+        }
+
+        @Override
+        public void run() {
+            buttonLogin.setEnabled(false);
+
+            SinhVien sinhVien = SinhVienDAO.login(tenDangNhap, matKhau);
+            buttonLogin.setEnabled(true);
+
+            if (sinhVien != null) {
+                loginFrame.setVisible(false);
+                sinhVienHomeView.setSinhVien(sinhVien);
+                sinhVienHomeView.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Sai Tên Đăng Nhập hoặc Mật Khẩu", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                passwordField.setText("");
+                passwordField.requestFocus();
+            }
+        }
+    }
+
     void createUI() {
         mainFrame = new JFrame();
         mainFrame.setTitle("Phần Mềm Quản Lý Sinh Viên");
@@ -104,28 +178,10 @@ public class LoginView {
 
             if (radioButtonGiaoVu.isSelected()) {
                 // Dang nhap Quan Ly
-                Admin admin = AdminDAO.login(tenDangNhap, matKhau);
-                if (admin != null) {
-                    mainFrame.setVisible(false);
-                    giaoVuHomeView.setAdmin(admin);
-                    giaoVuHomeView.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Sai Tên Đăng Nhập hoặc Mật Khẩu", "Thông báo", JOptionPane.ERROR_MESSAGE);
-                    passwordFieldMatKhau.setText("");
-                    passwordFieldMatKhau.requestFocus();
-                }
+                new LoginAdminThread(mainFrame, buttonLogin, giaoVuHomeView, passwordFieldMatKhau, tenDangNhap, matKhau).start();
             } else {
                 // Dang nhap Sinh Vien
-                SinhVien sinhVien = SinhVienDAO.login(tenDangNhap, matKhau);
-                if (sinhVien != null) {
-                    mainFrame.setVisible(false);
-                    sinhVienHomeView.setSinhVien(sinhVien);
-                    sinhVienHomeView.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Sai Tên Đăng Nhập hoặc Mật Khẩu", "Thông báo", JOptionPane.ERROR_MESSAGE);
-                    passwordFieldMatKhau.setText("");
-                    passwordFieldMatKhau.requestFocus();
-                }
+                new LoginSinhVienThread(mainFrame, buttonLogin, sinhVienHomeView, passwordFieldMatKhau, tenDangNhap, matKhau).start();
             }
         });
 

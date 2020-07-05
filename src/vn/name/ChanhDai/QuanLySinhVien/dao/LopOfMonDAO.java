@@ -89,10 +89,14 @@ public class LopOfMonDAO {
     }
 
     public static boolean update(LopOfMon lopOfMon) {
-        if (LopOfMonDAO.getSingle(lopOfMon.getId()) == null) {
+        LopOfMon check = LopOfMonDAO.getSingle(lopOfMon.getId());
+
+        if (check == null) {
             // Khong ton tai LopOfMon
             return false;
         }
+
+        lopOfMon.setId(check.getId());
 
         return HibernateUtils.updateRow(lopOfMon);
     }
@@ -101,9 +105,7 @@ public class LopOfMonDAO {
         LopOfMon lopOfMon = getSingleByMaSinhVienAndMaMon(data.getSinhVien().getMaSinhVien(), data.getMon().getMaMon());
         if (lopOfMon != null) {
             data.setId(lopOfMon.getId());
-//            System.out.println("Before : " + data.toString()); // DEBUG
-
-            return update(data);
+            return HibernateUtils.updateRow(data);
         }
 
         return false;

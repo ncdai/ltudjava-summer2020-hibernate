@@ -27,6 +27,8 @@ public class SinhVienView {
     JRadioButton radioButtonCreate;
     JRadioButton radioButtonDelete;
 
+    JButton buttonSubmit;
+
     public SinhVienView() {
         createUI();
         createImportCSVUI();
@@ -89,19 +91,133 @@ public class SinhVienView {
         }
     }
 
+    static class CreateSinhVienThread extends Thread {
+        JTable tableTarget;
+        JButton buttonSubmit;
+        SinhVien sinhVien;
+
+        public CreateSinhVienThread(JTable tableTarget, JButton buttonSubmit, SinhVien sinhVien) {
+            this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
+            this.sinhVien = sinhVien;
+        }
+
+        @Override
+        public void run() {
+            buttonSubmit.setEnabled(false);
+
+            boolean success = SinhVienDAO.create(sinhVien);
+            buttonSubmit.setEnabled(true);
+
+            if (success) {
+                SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
+                tableModel.addRow(TableUtils.toRow(sinhVien));
+                tableModel.fireTableDataChanged();
+
+                JOptionPane.showMessageDialog(null, "Thêm Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            JOptionPane.showMessageDialog(null, "Thêm Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    static class UpdateSinhVienThread extends Thread {
+        JTable tableTarget;
+        JButton buttonSubmit;
+        SinhVien sinhVien;
+        int rowIndex;
+
+        public UpdateSinhVienThread(JTable tableTarget, JButton buttonSubmit, SinhVien sinhVien, int rowIndex) {
+            this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
+            this.sinhVien = sinhVien;
+            this.rowIndex = rowIndex;
+        }
+
+        @Override
+        public void run() {
+            buttonSubmit.setEnabled(false);
+
+            boolean success = SinhVienDAO.update(sinhVien);
+            buttonSubmit.setEnabled(true);
+
+            if (success) {
+                SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
+                tableModel.updateRow(rowIndex, TableUtils.toRow(sinhVien));
+                tableModel.fireTableDataChanged();
+
+                JOptionPane.showMessageDialog(null, "Cập nhật thông tin Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            JOptionPane.showMessageDialog(null, "Cập nhật thông tin Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    static class DeleteSinhVienThread extends Thread {
+        JTable tableTarget;
+        JButton buttonSubmit;
+        SinhVien sinhVien;
+        int rowIndex;
+
+        public DeleteSinhVienThread(JTable tableTarget, JButton buttonSubmit, SinhVien sinhVien, int rowIndex) {
+            this.tableTarget = tableTarget;
+            this.buttonSubmit = buttonSubmit;
+            this.sinhVien = sinhVien;
+            this.rowIndex = rowIndex;
+        }
+
+        @Override
+        public void run() {
+            int confirm = JOptionPane.showConfirmDialog(
+                null,
+                "Bạn chắn chắn muốn xóa Sinh Viên " + sinhVien.getMaSinhVien() + "?",
+                "Xác Nhận",
+                JOptionPane.OK_CANCEL_OPTION
+            );
+
+            if (confirm != JOptionPane.YES_OPTION) return;
+
+            buttonSubmit.setEnabled(false);
+
+            boolean success = SinhVienDAO.delete(sinhVien.getMaSinhVien());
+            buttonSubmit.setEnabled(true);
+
+            if (success) {
+                SimpleTableModel tableModel = (SimpleTableModel) tableTarget.getModel();
+                tableModel.removeRow(rowIndex);
+                tableModel.fireTableDataChanged();
+                tableTarget.clearSelection();
+//                if (tableModel.getRowCount() > 0) {
+//                    tableTarget.setRowSelectionInterval(0, 0);
+//                }
+
+                JOptionPane.showMessageDialog(null, "Xóa Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            JOptionPane.showMessageDialog(null, "Xóa Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     static class ImportCSVThread extends Thread {
         JTable tableDraft;
         JTable tableTarget;
+        JButton buttonImport;
         JComboBox<SimpleComboBoxItem> comboBoxMaLop;
 
-        ImportCSVThread(JTable tableDraft, JTable tableTarget, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
+        ImportCSVThread(JTable tableDraft, JTable tableTarget, JButton buttonImport, JComboBox<SimpleComboBoxItem> comboBoxMaLop) {
             this.tableDraft = tableDraft;
             this.tableTarget = tableTarget;
+            this.buttonImport = buttonImport;
             this.comboBoxMaLop = comboBoxMaLop;
         }
 
         @Override
         public void run() {
+            buttonImport.setEnabled(false);
+
             SimpleTableModel tableDraftModel = (SimpleTableModel) tableDraft.getModel();
             SimpleTableModel tableTargetModel = (SimpleTableModel) tableTarget.getModel();
 
@@ -124,64 +240,11 @@ public class SinhVienView {
                 tableTargetModel.fireTableDataChanged();
             }
 
+            buttonImport.setEnabled(true);
             JOptionPane.showMessageDialog(null, "Đã nhập Danh Sách Sinh Viên thành công (" + actualImportQuantity + "/" + desiredImportQuantity + " Sinh Viên)", "Kết Quả", JOptionPane.INFORMATION_MESSAGE);
 
             new GetComboBoxMaLopThread(comboBoxMaLop, "all").start();
         }
-    }
-
-    void createSinhVien(SinhVien sinhVien) {
-        boolean success = SinhVienDAO.create(sinhVien);
-        if (success) {
-            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-            tableModel.addRow(TableUtils.toRow(sinhVien));
-            tableModel.fireTableDataChanged();
-
-            JOptionPane.showMessageDialog(mainFrame, "Thêm Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        JOptionPane.showMessageDialog(mainFrame, "Thêm Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
-    }
-
-    void updateSinhVien(SinhVien sinhVien, int row) {
-        boolean success = SinhVienDAO.update(sinhVien);
-        if (success) {
-            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-            tableModel.updateRow(row, TableUtils.toRow(sinhVien));
-            tableModel.fireTableDataChanged();
-
-            JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        JOptionPane.showMessageDialog(mainFrame, "Cập nhật thông tin Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
-    }
-
-    void deleteSinhVien(SinhVien sinhVien, int row) {
-        int confirm = JOptionPane.showConfirmDialog(
-            mainFrame,
-            "Bạn chắn chắn muốn xóa Sinh Viên " + sinhVien.getMaSinhVien() + "?",
-            "Xác Nhận",
-            JOptionPane.OK_CANCEL_OPTION
-        );
-
-        if (confirm != JOptionPane.YES_OPTION) return;
-
-        boolean success = SinhVienDAO.delete(sinhVien.getMaSinhVien());
-        if (success) {
-            SimpleTableModel tableModel = (SimpleTableModel) tableSinhVien.getModel();
-            tableModel.removeRow(row);
-            tableModel.fireTableDataChanged();
-            if (tableModel.getRowCount() > 0) {
-                tableSinhVien.setRowSelectionInterval(0, 0);
-            }
-
-            JOptionPane.showMessageDialog(mainFrame, "Xóa Sinh Viên thành công!", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        JOptionPane.showMessageDialog(mainFrame, "Xóa Sinh Viên thất bại!", "Thông Báo", JOptionPane.ERROR_MESSAGE);
     }
 
     SinhVien getSeletedRow() {
@@ -386,7 +449,7 @@ public class SinhVienView {
         textFieldMaLop = new JTextField();
         form.add(textFieldMaLop, ViewUtils.createFormConstraints(1, 5, 2, 4, 0, 4, 0));
 
-        JButton buttonSubmit = new JButton("Thực Hiện");
+        buttonSubmit = new JButton("Thực Hiện");
         form.add(buttonSubmit, ViewUtils.createFormConstraints(0, 6, 3, 4, 0, 0, 0));
 
         buttonSubmit.addActionListener(e -> {
@@ -407,7 +470,6 @@ public class SinhVienView {
             sinhVien.setGioiTinh(gioiTinh);
             sinhVien.setCmnd(cmnd);
             sinhVien.setMaLop(maLop);
-            sinhVien.setMatKhau(maSinhVien);
 
             int rowSelectedIndex = tableSinhVien.getSelectedRow();
 
@@ -415,19 +477,19 @@ public class SinhVienView {
 
                 // Create
                 System.out.println("buttonSubmit -> Create");
-                createSinhVien(sinhVien);
+                new CreateSinhVienThread(tableSinhVien, buttonSubmit, sinhVien).start();
 
             } else if (radioButtonUpdate.isSelected()) {
 
                 // Update
                 System.out.println("buttonSubmit -> Update");
-                updateSinhVien(sinhVien, rowSelectedIndex);
+                new UpdateSinhVienThread(tableSinhVien, buttonSubmit, sinhVien, rowSelectedIndex).start();
 
             } else if (radioButtonDelete.isSelected()) {
 
                 // Delete
                 System.out.println("buttonSubmit -> Delete");
-                deleteSinhVien(sinhVien, rowSelectedIndex);
+                new DeleteSinhVienThread(tableSinhVien, buttonSubmit, sinhVien, rowSelectedIndex).start();
             }
 
         });
@@ -471,8 +533,8 @@ public class SinhVienView {
             }
 
             @Override
-            public void startImport(JTable tablePreview) {
-                new ImportCSVThread(tablePreview, tableSinhVien, comboBoxMaLop).start();
+            public void startImport(JTable tablePreview, JButton buttonImport) {
+                new ImportCSVThread(tablePreview, tableSinhVien, buttonImport,  comboBoxMaLop).start();
             }
 
             @Override

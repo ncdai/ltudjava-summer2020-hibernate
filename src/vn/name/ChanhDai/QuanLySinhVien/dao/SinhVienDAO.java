@@ -44,9 +44,16 @@ public class SinhVienDAO {
     }
 
     public static boolean update(SinhVien sinhVien) {
-        if (HibernateUtils.getRow(SinhVien.class, sinhVien.getMaSinhVien()) == null) {
+        SinhVien check = HibernateUtils.getRow(SinhVien.class, sinhVien.getMaSinhVien());
+
+        if (check == null) {
             return false;
         }
+
+        sinhVien.setMatKhau(check.getMatKhau());
+        sinhVien.setDanhSachLop(check.getDanhSachLop());
+
+        System.out.println(sinhVien.toString());
 
         return HibernateUtils.updateRow(sinhVien);
     }

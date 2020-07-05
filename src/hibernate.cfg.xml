@@ -4,10 +4,10 @@
     "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://localhost:3306/QuanLySinhVien</property>
+        <property name="connection.url">jdbc:mysql://13.250.121.155:3306/QuanLySinhVien?useUnicode=true&amp;characterEncoding=UTF-8</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.username">root</property>
-        <property name="connection.password">happy2code</property>
+        <property name="connection.password">abc123</property>
 
         <mapping resource="Mon.hbm.xml"/>
         <mapping resource="SinhVien.hbm.xml"/>
