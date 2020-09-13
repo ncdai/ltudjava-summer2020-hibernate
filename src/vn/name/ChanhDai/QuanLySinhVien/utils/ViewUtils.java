@@ -1,13 +1,10 @@
 package vn.name.ChanhDai.QuanLySinhVien.utils;
 
-import vn.name.ChanhDai.QuanLySinhVien.Main;
-
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.net.URL;
 import java.util.Vector;
 
 /**
