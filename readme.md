@@ -34,4 +34,5 @@ Demo : [https://youtu.be/gzAzB86BPXA](https://youtu.be/gzAzB86BPXA)
 
 Chỉ xem được điểm của mình
 
-> Make by 18120113 - Nguyễn Chánh Đại
+---
+Sponsored by [1Password for Open Source Projects](https://github.com/1Password/1password-teams-open-source)
