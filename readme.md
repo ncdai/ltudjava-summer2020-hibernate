@@ -1,6 +1,6 @@
-# Phần mềm Quản Lý Sinh Viên
+# SMS - Student Management Software
 
-Demo : [https://youtu.be/gzAzB86BPXA](https://youtu.be/gzAzB86BPXA)
+Demo : [https://youtu.be/tG9SZEBrwog](https://youtu.be/tG9SZEBrwog)
 
 ## Technology Stack
 
@@ -8,31 +8,31 @@ Demo : [https://youtu.be/gzAzB86BPXA](https://youtu.be/gzAzB86BPXA)
 - Hibernate
 - MySQL
 
-## Tính năng
+## Features
 
-### Role : Chung
+### Role : Common
 
-- Đăng nhập / Đăng xuất
-- Đổi mật khẩu
+- Login / Logout
+- Change Password
 
-### Role : Giáo Vụ
+### Role : Manager
 
-- Import CSV [Danh sách sinh viên] 
-- Thêm sinh viên vào 1 lớp
-- Import CSV [Thời khóa biểu] (Mặc định tất cả SV của lớp đều học các môn trong TKB)
-- Xem thời khóa biểu của lớp
+- Import CSV [List of students]
+- Add students to a class
+- Import CSV [Timetable] (By default, all students in the class study the subjects in the timetable)
+- View class timetable
 
-- Xóa sinh viên khỏi lớp của 1 môn học
-- Thêm sinh viên vào lớp của 1 môn học
-- Xem danh sách lớp (VD : 18HCB)
-- Xem danh sách lớp của 1 môn (VD : 18HCB-CTT001)
+- Remove students from the class of a subject
+- Add students to the class of a subject
+- View class list (eg: 18HCB)
+- View class list of 1 subject (eg 18HCB-CTT001)
 
-- Import CSV [Bảng điểm]
-- Sửa điểm 1 sinh viên
+- Import CSV [Scoreboard]
+- Update student's score
 
-### Role : Sinh Viên
+### Role : Student
 
-Chỉ xem được điểm của mình
+Students can only see their grades
 
 ---
 Sponsored by [1Password for Open Source Projects](https://github.com/1Password/1password-teams-open-source)
