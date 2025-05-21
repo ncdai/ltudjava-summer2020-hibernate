@@ -1,6 +1,7 @@
 # SMS - Student Management Software
 
-Demo : [https://youtu.be/tG9SZEBrwog](https://youtu.be/tG9SZEBrwog)
+- Demo : [https://youtu.be/tG9SZEBrwog](https://youtu.be/tG9SZEBrwog)
+- Project Score: 10/10
 
 ## Technology Stack
 
